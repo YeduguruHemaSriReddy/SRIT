@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {supabase} from "../supabaseClient";
+import API from "../api"; // Your Render backend
 
 export default function Login() {
   const [tab, setTab] = useState("student");
@@ -10,13 +10,13 @@ export default function Login() {
   const navigate = useNavigate();
 
   // SRIT student mail pattern
-  // Example: 21g1a3310@srit.ac.in | 22g5a3312@srit.ac.in
-  const studentRegex = /^[0-9]{2}g(1a|5a)[0-9]{2}[0-9]{2}@srit\.ac\.in$/i;
+  const studentRegex = /^[0-9]{2}g(1a|5a)[0-9]{4}@srit\.ac\.in$/i;
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
 
+    // Email validation
     if (!email.endsWith("@srit.ac.in")) {
       return setError("Only SRIT email IDs are allowed");
     }
@@ -29,31 +29,26 @@ export default function Login() {
       return setError("Faculty must use official faculty email");
     }
 
-    const { data, error: authError } =
-      await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+    try {
+      // Call your backend login API
+      const response = await API.post("/login", { email, password });
+      const { token, role } = response.data; // Assuming backend returns JWT + role
 
-    if (authError) {
-      setError(authError.message);
-      return;
+      // Save token locally
+      localStorage.setItem("token", token);
+
+      // Navigate based on role
+      if (role === "student") navigate("/student");
+      else if (role === "faculty") navigate("/faculty");
+      else if (role === "admin") navigate("/admin");
+    } catch (err) {
+      console.error(err);
+      if (err.response && err.response.data && err.response.data.message) {
+        setError(err.response.data.message);
+      } else {
+        setError("Login failed. Please try again.");
+      }
     }
-
-    const { data: user, error: roleError } = await supabase
-      .from("users")
-      .select("role")
-      .eq("id", data.user.id)
-      .single();
-
-    if (roleError || !user) {
-      setError("User role not assigned. Contact admin.");
-      return;
-    }
-
-    if (user.role === "student") navigate("/student");
-    if (user.role === "faculty") navigate("/faculty");
-    if (user.role === "admin") navigate("/admin");
   };
 
   return (
@@ -74,9 +69,7 @@ export default function Login() {
             <button
               onClick={() => setTab("student")}
               className={`w-1/2 py-2 rounded-full text-sm font-semibold transition ${
-                tab === "student"
-                  ? "bg-orange-600 text-white"
-                  : "text-gray-600"
+                tab === "student" ? "bg-orange-600 text-white" : "text-gray-600"
               }`}
             >
               Student Login
@@ -84,9 +77,7 @@ export default function Login() {
             <button
               onClick={() => setTab("faculty")}
               className={`w-1/2 py-2 rounded-full text-sm font-semibold transition ${
-                tab === "faculty"
-                  ? "bg-blue-700 text-white"
-                  : "text-gray-600"
+                tab === "faculty" ? "bg-blue-700 text-white" : "text-gray-600"
               }`}
             >
               Faculty Login
