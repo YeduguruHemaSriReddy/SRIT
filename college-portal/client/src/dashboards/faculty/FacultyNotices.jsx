@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
+import API from "../../api";
 
 export default function FacultyNotices() {
   const [notices, setNotices] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/notices?role=faculty")
-      .then(res => res.json())
-      .then(setNotices);
+    API.get("/notices?role=faculty")
+      .then(response => setNotices(response.data));
   }, []);
 
   return (

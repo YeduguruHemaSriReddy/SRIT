@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import API from "../../api";
 
 export default function StudentNotices() {
   const [notices, setNotices] = useState([]);
@@ -10,12 +11,8 @@ export default function StudentNotices() {
 
   const fetchNotices = async () => {
     try {
-      const res = await fetch(
-        "http://localhost:5000/api/notices?role=student"
-      );
-
-      const data = await res.json();
-      setNotices(data || []);
+      const response = await API.get("/notices?role=student");
+      setNotices(response.data || []);
     } catch (err) {
       console.error("Failed to fetch notices", err);
     } finally {

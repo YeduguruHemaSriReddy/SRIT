@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
+import API from "../../api";
 
 export default function FacultyDownloads() {
   const [downloads, setDownloads] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/downloads?role=faculty")
-      .then(res => res.json())
-      .then(setDownloads);
+    API.get("/downloads?role=faculty")
+      .then(response => setDownloads(response.data));
   }, []);
 
   return (

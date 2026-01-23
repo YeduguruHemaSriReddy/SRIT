@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import API from "../../api";
 
 export default function StudentGrievances() {
   const { user } = useAuth();
@@ -11,23 +12,16 @@ export default function StudentGrievances() {
   }, []);
 
   const fetchGrievances = async () => {
-    const res = await fetch(
-      `http://localhost:5000/api/grievances/student/${user.id}`
-    );
-    const data = await res.json();
-    setGrievances(data || []);
+    const response = await API.get(`/grievances/student/${user.id}`);
+    setGrievances(response.data || []);
   };
 
   const submitGrievance = async () => {
     if (!message) return alert("Enter grievance");
 
-    await fetch("http://localhost:5000/api/grievances", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        user_id: user.id,
-        message,
-      }),
+    await API.post("/grievances", {
+      user_id: user.id,
+      message,
     });
 
     setMessage("");

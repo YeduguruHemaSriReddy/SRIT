@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import API from "../../api";
 
 export default function StudentDownloads() {
   const [downloads, setDownloads] = useState([]);
@@ -10,12 +11,8 @@ export default function StudentDownloads() {
 
   const fetchDownloads = async () => {
     try {
-      const res = await fetch(
-        "http://localhost:5000/api/downloads?role=student"
-      );
-
-      const data = await res.json();
-      setDownloads(data || []);
+      const response = await API.get("/downloads?role=student");
+      setDownloads(response.data || []);
     } catch (err) {
       console.error("Failed to fetch downloads", err);
     } finally {

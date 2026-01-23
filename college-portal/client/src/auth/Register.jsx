@@ -1,5 +1,6 @@
 import { useState } from "react";
 import supabase from "../supabaseClient";
+import API from "../api";
 
 import { useNavigate } from "react-router-dom";
 
@@ -36,24 +37,18 @@ export default function Register() {
     const userId = data.user.id;
 
     // 2️⃣ Call backend to create users + students rows
-    const res = await fetch("http://localhost:5000/api/register/student", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        id: userId,
-        name,
-        email,
-        department: "CSE",
-        year: 3,
-        section: "A",
-      }),
+    const response = await API.post("/register/student", {
+      id: userId,
+      name,
+      email,
+      department: "CSE",
+      year: 3,
+      section: "A",
     });
 
-    const result = await res.json();
-
-    if (!res.ok) {
+    if (response.status !== 200) {
       setLoading(false);
-      alert(result.error || "Registration failed");
+      alert(response.data.error || "Registration failed");
       return;
     }
 

@@ -31,7 +31,7 @@ export default function Login() {
 
     try {
       // Call your backend login API
-      const response = await API.post("/login", { email, password });
+      const response = await API.post("/auth/login", { email, password });
       const { token, role } = response.data; // Assuming backend returns JWT + role
 
       // Save token locally

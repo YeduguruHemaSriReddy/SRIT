@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import SectionHeader from "../components/SectionHeader";
 import EventCard from "../components/EventCard";
 import { Button } from "../components/ui/button";
+import API from "../api";
 
 import {
   ArrowRight,
@@ -45,9 +46,8 @@ export default function Home() {
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/notices?role=all")
-      .then((res) => res.json())
-      .then((data) => setEvents(data || []))
+    API.get("/notices?role=all")
+      .then((response) => setEvents(response.data || []))
       .catch(() => setEvents([]));
   }, []);
 

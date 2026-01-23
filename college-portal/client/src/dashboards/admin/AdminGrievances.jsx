@@ -1,20 +1,16 @@
 import { useEffect, useState } from "react";
+import API from "../../api";
 
 export default function AdminGrievances() {
   const [grievances, setGrievances] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/grievances")
-      .then(res => res.json())
-      .then(setGrievances);
+    API.get("/grievances")
+      .then(response => setGrievances(response.data));
   }, []);
 
   const updateStatus = async (id, status) => {
-    await fetch("http://localhost:5000/api/grievances", {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id, status }),
-    });
+    await API.put("/grievances", { id, status });
 
     setGrievances(g =>
       g.map(gr => gr.id === id ? { ...gr, status } : gr)

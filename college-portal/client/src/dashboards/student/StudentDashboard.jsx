@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import {supabase} from "../../supabaseClient";
+import API from "../../api";
 
 import { useAuth } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
@@ -34,11 +35,8 @@ export default function StudentDashboard() {
       setStudent(studentData);
 
       // 🔹 Notices (backend)
-      const res = await fetch(
-        "http://localhost:5000/api/notices?role=student"
-      );
-      const noticeData = await res.json();
-      setNotices(noticeData || []);
+      const response = await API.get("/notices?role=student");
+      setNotices(response.data || []);
     } catch (err) {
       console.error("Dashboard error:", err);
     } finally {
