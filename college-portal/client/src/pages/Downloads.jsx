@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
 import SectionHeader from "../components/SectionHeader";
 import { supabase } from "../services/supabase";

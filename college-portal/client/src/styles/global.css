@@ -1,34 +1,26 @@
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
+/* Page spacing consistency */
+.page {
+  padding-top: 6rem;
 }
 
-body {
-  background: #f4f6fb;
-  color: #1f2937;
+.section {
+  padding: 5rem 0;
 }
 
 .container {
-  width: 90%;
   max-width: 1200px;
   margin: auto;
+  padding: 0 1rem;
 }
 
+/* Smooth UI feel */
+* {
+  scroll-behavior: smooth;
+}
+
+/* Card polish */
 .card {
-  background: #ffffff;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-}
-
-.btn {
-  background: linear-gradient(135deg, #ff7a18, #ffb347);
-  border: none;
-  padding: 12px 24px;
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
+  background: white;
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
 }

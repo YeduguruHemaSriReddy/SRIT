@@ -1,173 +1,141 @@
-import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
-import SectionHeader from "../components/SectionHeader";
 import { motion } from "framer-motion";
-import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
-import { Button } from "../components/ui/button";
-import { useState } from "react";
+import {
+  Cpu,
+  Code,
+  Database,
+  Zap,
+  Plug,
+  Cog,
+  Building2,
+} from "lucide-react";
 
-export default function Contact() {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
+const departments = [
+  {
+    name: "Computer Science & Engineering (CSE)",
+    icon: Code,
+    color: "from-blue-600 to-indigo-600",
+    about:
+      "CSE focuses on computing technologies, programming, algorithms, AI, ML, and software development.",
+    careers: "Software Engineer, Full Stack Developer, Data Scientist, AI Engineer",
+  },
+  {
+    name: "Computer Science & Engineering (CSM)",
+    icon: Cpu,
+    color: "from-purple-600 to-pink-600",
+    about:
+      "CSM integrates Computer Science with Artificial Intelligence and Machine Learning.",
+    careers: "ML Engineer, AI Specialist, Data Analyst",
+  },
+  {
+    name: "Computer Science & Engineering (CSD)",
+    icon: Database,
+    color: "from-cyan-600 to-blue-500",
+    about:
+      "CSD emphasizes data engineering, analytics, big data technologies, and databases.",
+    careers: "Data Engineer, Data Analyst, Cloud Engineer",
+  },
+  {
+    name: "Electronics & Communication Engineering (ECE)",
+    icon: Zap,
+    color: "from-orange-500 to-red-500",
+    about:
+      "ECE covers electronics, communication systems, VLSI, embedded systems, and IoT.",
+    careers: "Electronics Engineer, VLSI Engineer, Network Engineer",
+  },
+  {
+    name: "Electrical & Electronics Engineering (EEE)",
+    icon: Plug,
+    color: "from-yellow-500 to-orange-500",
+    about:
+      "EEE focuses on power systems, electrical machines, control systems, and renewable energy.",
+    careers: "Electrical Engineer, Power Engineer, Control Engineer",
+  },
+  {
+    name: "Mechanical Engineering (MEC)",
+    icon: Cog,
+    color: "from-slate-600 to-gray-700",
+    about:
+      "Mechanical Engineering deals with design, manufacturing, thermal engineering, and automation.",
+    careers: "Design Engineer, Production Engineer, Automotive Engineer",
+  },
+  {
+    name: "Civil Engineering (CIVIL)",
+    icon: Building2,
+    color: "from-emerald-600 to-teal-600",
+    about:
+      "Civil Engineering focuses on construction, infrastructure, structural design, and planning.",
+    careers: "Civil Engineer, Structural Engineer, Site Engineer",
+  },
+];
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    // 🔗 Backend integration can be added here later
-    alert("Thank you for contacting us! We will get back to you soon.");
-
-    setForm({ name: "", email: "", message: "" });
-  };
-
+export default function Departments() {
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
+    <div className="min-h-screen bg-slate-950 text-white">
 
       {/* ================= HERO ================= */}
-      <section className="pt-32 pb-20 bg-gray-50 text-center">
-        <div className="container mx-auto px-4">
+      <section className="pt-36 pb-24 bg-gradient-to-br from-indigo-600 via-blue-600 to-cyan-500">
+        <div className="max-w-6xl mx-auto px-6 text-center">
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-5xl font-bold mb-6"
+            className="text-5xl md:text-7xl font-extrabold mb-6"
           >
-            Contact Us
+            Academic Departments
           </motion.h1>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            We’d love to hear from you. Reach out to us for admissions,
-            academic queries, or any assistance.
+          <p className="text-xl opacity-90 max-w-4xl mx-auto">
+            SRIT Anantapur offers industry-oriented undergraduate programs
+            designed to build strong technical and professional foundations.
           </p>
         </div>
       </section>
 
-      {/* ================= CONTACT DETAILS ================= */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <SectionHeader
-            title="Get in Touch"
-            subtitle="Contact Information"
-            centered
-          />
+      {/* ================= DEPARTMENTS GRID ================= */}
+      <section className="py-24 bg-slate-900">
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+          {departments.map((dept, index) => {
+            const Icon = dept.icon;
+            return (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className={`rounded-2xl p-8 bg-gradient-to-br ${dept.color} shadow-xl hover:scale-[1.03] transition`}
+              >
+                <Icon className="w-12 h-12 mb-4 text-white" />
 
-          <div className="grid md:grid-cols-4 gap-8 mt-12">
-            <div className="bg-gray-50 p-6 rounded-xl shadow-md text-center">
-              <MapPin className="w-8 h-8 text-primary mx-auto mb-3" />
-              <h4 className="font-bold mb-1">Address</h4>
-              <p className="text-sm text-gray-600">
-                SRIT Campus, Anantapur, Andhra Pradesh
-              </p>
-            </div>
+                <h3 className="text-2xl font-bold mb-3">
+                  {dept.name}
+                </h3>
 
-            <div className="bg-gray-50 p-6 rounded-xl shadow-md text-center">
-              <Phone className="w-8 h-8 text-primary mx-auto mb-3" />
-              <h4 className="font-bold mb-1">Phone</h4>
-              <p className="text-sm text-gray-600">
-                +91 98765 43210
-              </p>
-            </div>
+                <p className="text-white/90 mb-4 leading-relaxed">
+                  {dept.about}
+                </p>
 
-            <div className="bg-gray-50 p-6 rounded-xl shadow-md text-center">
-              <Mail className="w-8 h-8 text-primary mx-auto mb-3" />
-              <h4 className="font-bold mb-1">Email</h4>
-              <p className="text-sm text-gray-600">
-                info@srit.ac.in
-              </p>
-            </div>
-
-            <div className="bg-gray-50 p-6 rounded-xl shadow-md text-center">
-              <Clock className="w-8 h-8 text-primary mx-auto mb-3" />
-              <h4 className="font-bold mb-1">Office Hours</h4>
-              <p className="text-sm text-gray-600">
-                Mon – Sat : 9:00 AM – 5:00 PM
-              </p>
-            </div>
-          </div>
+                <div className="mt-4">
+                  <p className="text-sm font-semibold uppercase tracking-wide">
+                    Career Opportunities
+                  </p>
+                  <p className="text-sm text-white/90 mt-1">
+                    {dept.careers}
+                  </p>
+                </div>
+              </motion.div>
+            );
+          })}
         </div>
       </section>
 
-      {/* ================= CONTACT FORM ================= */}
-      <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-4 max-w-4xl">
-          <SectionHeader
-            title="Send Us a Message"
-            subtitle="We’re Here to Help"
-            centered
-          />
-
-          <motion.form
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            onSubmit={handleSubmit}
-            className="bg-white p-8 rounded-2xl shadow-lg mt-12"
-          >
-            <div className="grid md:grid-cols-2 gap-6">
-              <input
-                type="text"
-                name="name"
-                placeholder="Your Name"
-                value={form.name}
-                onChange={handleChange}
-                required
-                className="border rounded-lg px-4 py-3 w-full"
-              />
-
-              <input
-                type="email"
-                name="email"
-                placeholder="Your Email"
-                value={form.email}
-                onChange={handleChange}
-                required
-                className="border rounded-lg px-4 py-3 w-full"
-              />
-            </div>
-
-            <textarea
-              name="message"
-              placeholder="Your Message"
-              value={form.message}
-              onChange={handleChange}
-              required
-              className="border rounded-lg px-4 py-3 w-full mt-6 h-32"
-            ></textarea>
-
-            <div className="text-center mt-8">
-              <Button size="lg" className="px-10">
-                Send Message <Send className="ml-2 w-5 h-5" />
-              </Button>
-            </div>
-          </motion.form>
-        </div>
-      </section>
-
-      {/* ================= MAP ================= */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <SectionHeader
-            title="Our Location"
-            subtitle="Find Us on Map"
-            centered
-          />
-
-          <div className="mt-12 rounded-xl overflow-hidden shadow-lg">
-            <iframe
-              title="SRIT Location"
-              src="https://www.google.com/maps?q=Anantapur%20Andhra%20Pradesh&output=embed"
-              width="100%"
-              height="400"
-              style={{ border: 0 }}
-              loading="lazy"
-            ></iframe>
-          </div>
-        </div>
+      {/* ================= WHY SRIT ================= */}
+      <section className="py-24 bg-gradient-to-br from-slate-800 to-slate-900 text-center">
+        <h2 className="text-4xl font-bold mb-6">
+          Why Choose SRIT?
+        </h2>
+        <p className="max-w-4xl mx-auto text-lg opacity-80">
+          Industry-aligned curriculum • Experienced faculty • Modern laboratories •
+          Strong placement support • Holistic student development
+        </p>
       </section>
 
       <Footer />

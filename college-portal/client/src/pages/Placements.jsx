@@ -1,132 +1,134 @@
-import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
-import SectionHeader from "../components/SectionHeader";
 import { motion } from "framer-motion";
 import {
-  Briefcase,
+  Users,
   Building,
   TrendingUp,
-  Users,
   Award,
+  GraduationCap,
+  Star,
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 
 export default function Placements() {
   const stats = [
-    { icon: Users, label: "Students Placed", value: "850+" },
-    { icon: Building, label: "Recruiting Companies", value: "120+" },
-    { icon: TrendingUp, label: "Highest Package", value: "12 LPA" },
-    { icon: Award, label: "Average Package", value: "4.5 LPA" },
+    { icon: Users, value: "850+", label: "Students Placed", color: "from-blue-500 to-indigo-600" },
+    { icon: Building, value: "120+", label: "Recruiting Companies", color: "from-emerald-500 to-teal-600" },
+    { icon: TrendingUp, value: "12 LPA", label: "Highest Package", color: "from-orange-500 to-red-600" },
+    { icon: Award, value: "4.5 LPA", label: "Average Package", color: "from-purple-500 to-pink-600" },
+  ];
+
+  const branches = [
+    { name: "CSE / CSM / CSD", rate: "95%" },
+    { name: "ECE", rate: "90%" },
+    { name: "EEE", rate: "85%" },
+    { name: "MECH", rate: "80%" },
+    { name: "CIVIL", rate: "75%" },
   ];
 
   const recruiters = [
-    "TCS",
-    "Infosys",
-    "Wipro",
-    "Accenture",
-    "Cognizant",
-    "Capgemini",
-    "Tech Mahindra",
-    "Amazon",
-    "Deloitte",
-    "HCL",
-    "IBM",
-    "Oracle",
+    "TCS", "Infosys", "Wipro", "Accenture", "Cognizant",
+    "Capgemini", "Tech Mahindra", "Amazon", "Deloitte",
+    "IBM", "HCL", "Oracle",
   ];
 
-  const process = [
-    {
-      title: "Training & Skill Development",
-      desc: "Aptitude, coding, communication, and soft-skills training from first year onwards.",
-    },
-    {
-      title: "Industry Interaction",
-      desc: "Guest lectures, industrial visits, and internships with leading companies.",
-    },
-    {
-      title: "Placement Drives",
-      desc: "On-campus and pooled drives conducted throughout the academic year.",
-    },
-    {
-      title: "Career Support",
-      desc: "Resume building, mock interviews, and continuous mentoring.",
-    },
+  const features = [
+    "CRT training from 1st year",
+    "Dedicated placement cell",
+    "Mock interviews & aptitude tests",
+    "Soft skills & communication training",
+    "Internships & industry projects",
+    "Alumni mentorship support",
   ];
 
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-orange-50">
 
       {/* ================= HERO ================= */}
-      <section className="pt-32 pb-20 bg-gray-50 text-center">
-        <div className="container mx-auto px-4">
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-4xl md:text-5xl font-bold mb-6"
-          >
-            Placements
-          </motion.h1>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Our dedicated Training & Placement Cell ensures excellent career
-            opportunities for students through continuous training and industry collaboration.
-          </p>
+      <section className="pt-36 pb-28 text-center relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-blue-500 opacity-10"></div>
+
+        <motion.h1
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-5xl md:text-6xl font-extrabold mb-6"
+        >
+          Career Opportunities at <span className="text-primary">SRIT</span>
+        </motion.h1>
+
+        <p className="text-xl text-gray-700 max-w-4xl mx-auto">
+          Our Training & Placement Cell ensures students are industry-ready
+          through continuous skill development, internships, and top-company
+          recruitment drives.
+        </p>
+      </section>
+
+      {/* ================= STATS ================= */}
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 lg:grid-cols-4 gap-10">
+          {stats.map((item, i) => {
+            const Icon = item.icon;
+            return (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className={`rounded-3xl p-8 text-white shadow-2xl bg-gradient-to-br ${item.color}`}
+              >
+                <Icon className="w-10 h-10 mb-4" />
+                <h3 className="text-4xl font-extrabold">{item.value}</h3>
+                <p className="opacity-90 mt-2">{item.label}</p>
+              </motion.div>
+            );
+          })}
         </div>
       </section>
 
-      {/* ================= PLACEMENT STATS ================= */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <SectionHeader
-            title="Placement Highlights"
-            subtitle="Our Achievements"
-            centered
-          />
+      {/* ================= BRANCH WISE ================= */}
+      <section className="py-24 bg-gradient-to-r from-purple-600 to-indigo-600 text-white">
+        <div className="max-w-6xl mx-auto px-6">
+          <h2 className="text-4xl font-bold text-center mb-16">
+            Branch-Wise Placement Performance
+          </h2>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mt-12">
-            {stats.map((item, index) => (
+          <div className="grid md:grid-cols-3 gap-10">
+            {branches.map((b, i) => (
               <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                key={i}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="bg-gray-50 p-6 rounded-xl shadow-md text-center"
+                className="bg-white/15 backdrop-blur-lg p-8 rounded-2xl shadow-lg text-center"
               >
-                <item.icon className="w-10 h-10 text-primary mx-auto mb-4" />
-                <h3 className="text-2xl font-bold">{item.value}</h3>
-                <p className="text-gray-600">{item.label}</p>
+                <GraduationCap className="w-10 h-10 mx-auto mb-4 text-yellow-300" />
+                <h3 className="text-xl font-bold">{b.name}</h3>
+                <p className="text-3xl font-extrabold mt-3">{b.rate}</p>
+                <p className="opacity-80 mt-1">Placement Rate</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ================= PLACEMENT PROCESS ================= */}
-      <section className="py-20 bg-gray-50">
-        <div className="container mx-auto px-4">
-          <SectionHeader
-            title="Placement Process"
-            subtitle="How We Prepare You"
-            centered
-          />
+      {/* ================= TRAINING ================= */}
+      <section className="py-24">
+        <div className="max-w-6xl mx-auto px-6">
+          <h2 className="text-4xl font-bold text-center mb-14">
+            Training & Career Development
+          </h2>
 
-          <div className="grid md:grid-cols-2 gap-10 mt-12">
-            {process.map((step, index) => (
+          <div className="grid md:grid-cols-2 gap-10">
+            {features.map((f, i) => (
               <motion.div
-                key={index}
-                initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
+                key={i}
+                initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                className="bg-white p-8 rounded-xl shadow-md"
+                className="flex items-start gap-4 bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition"
               >
-                <div className="flex items-center gap-3 mb-3">
-                  <Briefcase className="w-6 h-6 text-primary" />
-                  <h4 className="font-bold text-lg">{step.title}</h4>
-                </div>
-                <p className="text-gray-600 text-sm leading-relaxed">
-                  {step.desc}
-                </p>
+                <Star className="w-7 h-7 text-primary mt-1" />
+                <p className="text-gray-700 font-medium">{f}</p>
               </motion.div>
             ))}
           </div>
@@ -134,24 +136,25 @@ export default function Placements() {
       </section>
 
       {/* ================= RECRUITERS ================= */}
-      <section className="py-20 bg-white">
-        <div className="container mx-auto px-4">
-          <SectionHeader
-            title="Our Recruiters"
-            subtitle="Industry Partners"
-            centered
-          />
+      <section className="py-24 bg-gradient-to-b from-gray-100 to-white">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <h2 className="text-4xl font-bold mb-6">
+            Top Recruiters
+          </h2>
+          <p className="text-gray-600 mb-12">
+            Leading companies regularly recruit SRIT graduates
+          </p>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-12">
-            {recruiters.map((company, index) => (
+          <div className="flex flex-wrap justify-center gap-4">
+            {recruiters.map((r, i) => (
               <motion.div
-                key={index}
-                initial={{ opacity: 0, scale: 0.95 }}
+                key={i}
+                initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                className="bg-gray-50 p-4 rounded-lg shadow-sm text-center font-semibold text-gray-700"
+                className="px-6 py-3 rounded-full bg-white shadow-md font-semibold text-gray-700 hover:bg-primary hover:text-white transition"
               >
-                {company}
+                {r}
               </motion.div>
             ))}
           </div>
@@ -159,16 +162,16 @@ export default function Placements() {
       </section>
 
       {/* ================= CTA ================= */}
-      <section className="py-20 bg-primary text-white text-center">
-        <h2 className="text-3xl md:text-4xl font-bold mb-6">
-          Building Careers, Creating Leaders
+      <section className="py-28 bg-gradient-to-r from-orange-500 to-red-600 text-white text-center">
+        <h2 className="text-4xl md:text-5xl font-extrabold mb-6">
+          Transforming Students into Professionals
         </h2>
-        <p className="text-lg mb-8 opacity-90 max-w-3xl mx-auto">
-          SRIT is committed to shaping industry-ready graduates through
-          continuous training and placement support.
+        <p className="text-lg max-w-3xl mx-auto mb-10 opacity-95">
+          SRIT’s placement ecosystem is designed to ensure every student gets
+          the opportunity to succeed in their chosen career path.
         </p>
 
-        <Button size="lg" variant="secondary">
+        <Button size="lg" variant="secondary" className="px-12 py-6 text-lg">
           Contact Placement Cell
         </Button>
       </section>
