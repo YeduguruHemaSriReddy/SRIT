@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { supabase } from "../../services/supabase";
+//import { supabase } from "../../services/supabase";
+import {supabase} from "../../supabaseClient";
 
 export default function AdminNotices() {
   const [title, setTitle] = useState("");

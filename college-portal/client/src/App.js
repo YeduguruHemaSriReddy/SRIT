@@ -14,7 +14,6 @@ import Contact from "./pages/Contact";
 
 /* ---------- AUTH ---------- */
 import Login from "./auth/Login";
-import Register from "./auth/Register";
 
 /* ---------- STUDENT ---------- */
 import StudentDashboard from "./dashboards/student/StudentDashboard";
@@ -41,25 +40,25 @@ function ProtectedRoute({ children, allowedRole }) {
   }
 
   if (!user) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" replace />;
   }
 
   if (allowedRole && role !== allowedRole) {
-    return <Navigate to="/" />;
+    return <Navigate to="/" replace />;
   }
 
   return children;
 }
 
 /* ---------- APP ---------- */
-function App() {
+export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Navigation />
 
-        {/* 🔥 GLOBAL FIX FOR FIXED NAVBAR */}
-        <div className="pt-44">
+        {/* FIX: space for fixed navbar */}
+        <main className="pt-44 relative z-10">
           <Routes>
             {/* ===== PUBLIC ===== */}
             <Route path="/" element={<Home />} />
@@ -70,7 +69,6 @@ function App() {
             <Route path="/placements" element={<Placements />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
 
             {/* ===== STUDENT ===== */}
             <Route
@@ -158,10 +156,8 @@ function App() {
               }
             />
           </Routes>
-        </div>
+        </main>
       </BrowserRouter>
     </AuthProvider>
   );
 }
-
-export default App;

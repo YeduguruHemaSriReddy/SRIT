@@ -1,42 +1,34 @@
 import { useState } from "react";
-import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
+import {supabase} from "../supabaseClient";
 
 export default function Login() {
   const [tab, setTab] = useState("student");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
   const navigate = useNavigate();
 
-  // SRIT student roll format
-  // eg: 21g1a3312@srit.ac.in | 22g5a1023@srit.ac.in
+  // SRIT student mail pattern
+  // Example: 21g1a3310@srit.ac.in | 22g5a3312@srit.ac.in
   const studentRegex = /^[0-9]{2}g(1a|5a)[0-9]{2}[0-9]{2}@srit\.ac\.in$/i;
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
-    setLoading(true);
 
-    /* ---------- BASIC VALIDATION ---------- */
     if (!email.endsWith("@srit.ac.in")) {
-      setLoading(false);
       return setError("Only SRIT email IDs are allowed");
     }
 
     if (tab === "student" && !studentRegex.test(email)) {
-      setLoading(false);
-      return setError("Invalid student roll number email format");
+      return setError("Invalid student roll number email");
     }
 
     if (tab === "faculty" && studentRegex.test(email)) {
-      setLoading(false);
       return setError("Faculty must use official faculty email");
     }
 
-    /* ---------- SUPABASE AUTH ---------- */
     const { data, error: authError } =
       await supabase.auth.signInWithPassword({
         email,
@@ -44,72 +36,80 @@ export default function Login() {
       });
 
     if (authError) {
-      setLoading(false);
-      return setError(authError.message);
+      setError(authError.message);
+      return;
     }
 
-    /* ---------- FETCH ROLE ---------- */
-    const { data: userData, error: roleError } = await supabase
+    const { data: user, error: roleError } = await supabase
       .from("users")
       .select("role")
       .eq("id", data.user.id)
       .single();
 
-    if (roleError || !userData) {
-      setLoading(false);
-      return setError("Role not assigned. Contact admin.");
+    if (roleError || !user) {
+      setError("User role not assigned. Contact admin.");
+      return;
     }
 
-    /* ---------- ROLE CHECK ---------- */
-    if (userData.role !== tab) {
-      setLoading(false);
-      return setError(`You are not authorized as ${tab}`);
-    }
-
-    /* ---------- REDIRECT ---------- */
-    if (userData.role === "student") navigate("/student");
-    if (userData.role === "faculty") navigate("/faculty");
-    if (userData.role === "admin") navigate("/admin");
-
-    setLoading(false);
+    if (user.role === "student") navigate("/student");
+    if (user.role === "faculty") navigate("/faculty");
+    if (user.role === "admin") navigate("/admin");
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-orange-50">
-      <div className="bg-white w-full max-w-md rounded-2xl shadow-xl p-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 via-white to-orange-50">
+      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
 
-        {/* TABS */}
-        <div className="flex mb-6 rounded-full bg-gray-100 p-1">
-          {["student", "faculty"].map((t) => (
+        {/* Header */}
+        <div className="bg-gradient-to-r from-blue-900 to-blue-700 text-white text-center py-6">
+          <h1 className="text-xl font-bold">
+            Srinivasa Ramanujan Institute of Technology
+          </h1>
+          <p className="text-sm opacity-90">Anantapur</p>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex justify-center mt-6">
+          <div className="bg-gray-100 rounded-full p-1 flex w-[90%]">
             <button
-              key={t}
-              onClick={() => setTab(t)}
-              className={`w-1/2 py-2 rounded-full font-semibold transition ${
-                tab === t
+              onClick={() => setTab("student")}
+              className={`w-1/2 py-2 rounded-full text-sm font-semibold transition ${
+                tab === "student"
                   ? "bg-orange-600 text-white"
                   : "text-gray-600"
               }`}
             >
-              {t === "student" ? "Student Login" : "Faculty Login"}
+              Student Login
             </button>
-          ))}
+            <button
+              onClick={() => setTab("faculty")}
+              className={`w-1/2 py-2 rounded-full text-sm font-semibold transition ${
+                tab === "faculty"
+                  ? "bg-blue-700 text-white"
+                  : "text-gray-600"
+              }`}
+            >
+              Faculty Login
+            </button>
+          </div>
         </div>
 
-        <h2 className="text-2xl font-bold text-center mb-6">
-          {tab === "student" ? "Student Portal" : "Faculty Portal"}
-        </h2>
+        {/* Form */}
+        <form onSubmit={handleLogin} className="px-8 py-6 space-y-4">
+          <h2 className="text-center text-lg font-bold text-gray-800">
+            {tab === "student" ? "Student Portal" : "Faculty Portal"}
+          </h2>
 
-        {error && (
-          <p className="text-red-600 text-sm mb-4 text-center">{error}</p>
-        )}
+          {error && (
+            <p className="text-red-600 text-sm text-center">{error}</p>
+          )}
 
-        <form onSubmit={handleLogin} className="space-y-4">
           <input
             type="email"
             placeholder="SRIT Email ID"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full border rounded-lg px-4 py-3"
+            className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-400 outline-none"
             required
           />
 
@@ -118,16 +118,15 @@ export default function Login() {
             placeholder="Password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full border rounded-lg px-4 py-3"
+            className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-orange-400 outline-none"
             required
           />
 
           <button
             type="submit"
-            disabled={loading}
-            className="w-full bg-orange-600 text-white py-3 rounded-lg font-semibold hover:bg-orange-700 disabled:opacity-60"
+            className="w-full py-3 rounded-lg font-semibold text-white bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-700 hover:to-orange-600 transition"
           >
-            {loading ? "Logging in..." : "Login"}
+            Login
           </button>
         </form>
       </div>

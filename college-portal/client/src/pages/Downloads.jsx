@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import Footer from "../components/Footer";
 import SectionHeader from "../components/SectionHeader";
-import { supabase } from "../services/supabase";
+//import { supabase } from "../services/supabase";
+import supabase from "../supabaseClient";
+
 import { Download as DownloadIcon, FileText } from "lucide-react";
 import { motion } from "framer-motion";
 

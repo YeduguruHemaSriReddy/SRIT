@@ -17,7 +17,7 @@ export default function Navigation() {
   ];
 
   return (
-    <header className="w-full bg-white">
+    <header className="fixed top-0 w-full z-40 pointer-events-auto">
 
       {/* ================= TOP CONTACT STRIP ================= */}
       <div className="bg-orange-600 text-white text-xs">

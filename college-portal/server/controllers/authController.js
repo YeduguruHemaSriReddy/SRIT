@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { supabaseAdmin } from "../supabaseAdmin.js";
+import supabaseAdmin from "../supabaseAdmin.js";
 
 const BRANCH_CODES = ["01", "02", "03", "05", "10", "32", "33"];
 
