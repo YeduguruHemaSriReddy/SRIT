@@ -1,6 +1,11 @@
 import { motion } from "framer-motion";
 
-const StatsCard = ({ value, label, description, delay = 0 }) => {
+const StatsCard = ({
+  value,
+  label,
+  description,
+  delay = 0,
+}) => {
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}

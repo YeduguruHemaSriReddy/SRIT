@@ -31,19 +31,44 @@ const Footer = () => {
 
             {/* SOCIAL ICONS */}
             <div className="flex gap-4">
-              <a className="social-btn" href="#">
+              <a
+                className="social-btn"
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Facebook size={18} />
               </a>
-              <a className="social-btn" href="#">
+              <a
+                className="social-btn"
+                href="https://twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Twitter size={18} />
               </a>
-              <a className="social-btn" href="#">
+              <a
+                className="social-btn"
+                href="https://linkedin.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Linkedin size={18} />
               </a>
-              <a className="social-btn" href="#">
+              <a
+                className="social-btn"
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Instagram size={18} />
               </a>
-              <a className="social-btn" href="#">
+              <a
+                className="social-btn"
+                href="https://youtube.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <Youtube size={18} />
               </a>
             </div>
@@ -65,11 +90,11 @@ const Footer = () => {
           <div>
             <h4 className="font-bold text-lg mb-6">Departments</h4>
             <ul className="space-y-3 text-sm text-gray-400">
-              <li className="hover:text-primary cursor-pointer">Computer Science (CSE)</li>
-              <li className="hover:text-primary cursor-pointer">Electronics (ECE)</li>
-              <li className="hover:text-primary cursor-pointer">Electrical (EEE)</li>
-              <li className="hover:text-primary cursor-pointer">Mechanical (ME)</li>
-              <li className="hover:text-primary cursor-pointer">Civil (CE)</li>
+              <li className="hover:text-primary">Computer Science (CSE)</li>
+              <li className="hover:text-primary">Electronics (ECE)</li>
+              <li className="hover:text-primary">Electrical (EEE)</li>
+              <li className="hover:text-primary">Mechanical (ME)</li>
+              <li className="hover:text-primary">Civil (CE)</li>
             </ul>
           </div>
 
@@ -88,8 +113,12 @@ const Footer = () => {
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
           <p>© {new Date().getFullYear()} SRIT. All rights reserved.</p>
           <div className="flex gap-6">
-            <a href="#" className="hover:text-white">Privacy Policy</a>
-            <a href="#" className="hover:text-white">Terms of Service</a>
+            <Link to="/privacy" className="hover:text-white">
+              Privacy Policy
+            </Link>
+            <Link to="/terms" className="hover:text-white">
+              Terms of Service
+            </Link>
           </div>
         </div>
       </div>

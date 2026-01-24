@@ -1,56 +1,59 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import supabase from "../../supabaseClient";
 import { useAuth } from "../../context/AuthContext";
-import API from "../../api";
 
 export default function StudentGrievances() {
   const { user } = useAuth();
-  const [message, setMessage] = useState("");
+
   const [grievances, setGrievances] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchGrievances = useCallback(async () => {
+    if (!user) return;
+
+    try {
+      const { data, error } = await supabase
+        .from("grievances")
+        .select("*")
+        .eq("user_id", user.id)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      setGrievances(data || []);
+    } catch (err) {
+      console.error("Grievances error:", err);
+    } finally {
+      setLoading(false);
+    }
+  }, [user]);
 
   useEffect(() => {
     fetchGrievances();
-  }, []);
+  }, [fetchGrievances]);
 
-  const fetchGrievances = async () => {
-    const response = await API.get(`/grievances/student/${user.id}`);
-    setGrievances(response.data || []);
-  };
-
-  const submitGrievance = async () => {
-    if (!message) return alert("Enter grievance");
-
-    await API.post("/grievances", {
-      user_id: user.id,
-      message,
-    });
-
-    setMessage("");
-    fetchGrievances();
-  };
+  if (loading) {
+    return <p className="p-10 text-center">Loading grievances...</p>;
+  }
 
   return (
-    <div className="container" style={{ padding: "30px" }}>
-      <h2>📝 Grievances</h2>
+    <div className="min-h-screen bg-gray-100 p-6">
+      <h1 className="text-2xl font-bold mb-6">📝 My Grievances</h1>
 
-      <textarea
-        placeholder="Write your grievance..."
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        style={{ width: "100%", height: "100px" }}
-      />
-
-      <button className="btn" onClick={submitGrievance}>
-        Submit
-      </button>
-
-      <h3 style={{ marginTop: "30px" }}>Previous Grievances</h3>
-
-      {grievances.map((g) => (
-        <div key={g.id} className="card" style={{ marginTop: "10px" }}>
-          <p>{g.message}</p>
-          <small>Status: {g.status}</small>
+      {grievances.length === 0 ? (
+        <p className="text-gray-500">No grievances submitted</p>
+      ) : (
+        <div className="space-y-4">
+          {grievances.map((g) => (
+            <div key={g.id} className="bg-white p-6 rounded-xl shadow">
+              <p className="font-semibold">{g.category}</p>
+              <p className="text-gray-600 text-sm mt-1">{g.message}</p>
+              <p className="text-xs text-gray-400 mt-2">
+                Status: {g.status}
+              </p>
+            </div>
+          ))}
         </div>
-      ))}
+      )}
     </div>
   );
 }

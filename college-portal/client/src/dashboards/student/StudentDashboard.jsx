@@ -1,15 +1,11 @@
-import { useEffect, useState } from "react";
-import {supabase} from "../../supabaseClient";
-import API from "../../api";
-
-import { useAuth } from "../../context/AuthContext";
+import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import {
-  BookOpen,
-  Bell,
-  Download,
-  MessageSquare,
-} from "lucide-react";
+import { Bell, Download, MessageSquare } from "lucide-react";
+
+import supabase from "../../supabaseClient";
+import API from "../../api";
+import { useAuth } from "../../context/AuthContext";
+import StatsCard from "../../components/StatsCard";
 
 export default function StudentDashboard() {
   const { user, loading: authLoading } = useAuth();
@@ -18,45 +14,57 @@ export default function StudentDashboard() {
   const [notices, setNotices] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const loadDashboard = useCallback(async () => {
     if (!user) return;
-    loadDashboard();
-  }, [user]);
 
-  const loadDashboard = async () => {
     try {
       // 🔹 Student profile
-      const { data: studentData } = await supabase
+      const { data, error } = await supabase
         .from("students")
         .select("*")
         .eq("user_id", user.id)
         .single();
 
-      setStudent(studentData);
+      if (error) throw error;
+      setStudent(data);
 
-      // 🔹 Notices (backend)
-      const response = await API.get("/notices?role=student");
-      setNotices(response.data || []);
+      // 🔹 Notices
+      const res = await API.get("/notices?role=student");
+      setNotices(res.data || []);
     } catch (err) {
-      console.error("Dashboard error:", err);
+      console.error("Student dashboard error:", err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    loadDashboard();
+  }, [loadDashboard]);
 
   if (authLoading || loading) {
-    return <p className="p-10 text-center">Loading dashboard...</p>;
+    return (
+      <p className="p-10 text-center text-gray-500">
+        Loading dashboard...
+      </p>
+    );
   }
 
   if (!student) {
-    return <p className="p-10 text-center">Student profile not found</p>;
+    return (
+      <p className="p-10 text-center text-red-500">
+        Student profile not found
+      </p>
+    );
   }
 
   return (
     <div className="min-h-screen bg-gray-100">
       {/* ================= HEADER ================= */}
       <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-10">
-        <h1 className="text-3xl font-bold">🎓 Student Dashboard</h1>
+        <h1 className="text-3xl font-bold">
+          🎓 Student Dashboard
+        </h1>
         <p className="text-white/80 mt-1">
           Welcome back, {student.roll_number || "Student"}
         </p>
@@ -64,11 +72,27 @@ export default function StudentDashboard() {
 
       <div className="max-w-7xl mx-auto px-6 py-8">
         {/* ================= STATS ================= */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          <StatCard title="Department" value={student.department} />
-          <StatCard title="Year" value={`Year ${student.year}`} />
-          <StatCard title="Roll No" value={student.roll_number || "—"} />
-          <StatCard title="Phone" value={student.phone || "—"} />
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <StatsCard
+            value={student.department}
+            label="Department"
+            delay={0.1}
+          />
+          <StatsCard
+            value={`Year ${student.year}`}
+            label="Academic Year"
+            delay={0.2}
+          />
+          <StatsCard
+            value={student.roll_number || "—"}
+            label="Roll Number"
+            delay={0.3}
+          />
+          <StatsCard
+            value={student.phone || "—"}
+            label="Phone"
+            delay={0.4}
+          />
         </div>
 
         {/* ================= QUICK ACTIONS ================= */}
@@ -95,16 +119,25 @@ export default function StudentDashboard() {
 
         {/* ================= RECENT NOTICES ================= */}
         <div>
-          <h2 className="text-xl font-bold mb-4">📢 Recent Notices</h2>
+          <h2 className="text-xl font-bold mb-4">
+            📢 Recent Notices
+          </h2>
 
           {notices.length === 0 && (
-            <p className="text-gray-500">No notices available</p>
+            <p className="text-gray-500">
+              No notices available
+            </p>
           )}
 
           <div className="grid md:grid-cols-2 gap-6">
             {notices.slice(0, 4).map((n) => (
-              <div key={n.id} className="bg-white p-6 rounded-xl shadow">
-                <h3 className="font-semibold mb-2">{n.title}</h3>
+              <div
+                key={n.id}
+                className="bg-white p-6 rounded-xl shadow"
+              >
+                <h3 className="font-semibold mb-2">
+                  {n.title}
+                </h3>
                 <p className="text-sm text-gray-600 line-clamp-2">
                   {n.description}
                 </p>
@@ -120,16 +153,7 @@ export default function StudentDashboard() {
   );
 }
 
-/* ---------------- COMPONENTS ---------------- */
-
-function StatCard({ title, value }) {
-  return (
-    <div className="bg-white p-6 rounded-xl shadow text-center">
-      <p className="text-sm text-gray-500">{title}</p>
-      <h3 className="text-2xl font-bold mt-2">{value}</h3>
-    </div>
-  );
-}
+/* ---------------- SUB COMPONENT ---------------- */
 
 function ActionCard({ title, icon, link, color }) {
   return (

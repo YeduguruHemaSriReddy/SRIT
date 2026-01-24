@@ -4,7 +4,6 @@ import {
   Bell,
   Download,
   BookOpen,
-  Users,
 } from "lucide-react";
 
 export default function FacultyDashboard() {

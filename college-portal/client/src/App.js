@@ -20,7 +20,7 @@ import StudentDashboard from "./dashboards/student/StudentDashboard";
 import StudentNotices from "./dashboards/student/StudentNotices";
 import StudentDownloads from "./dashboards/student/StudentDownloads";
 import StudentGrievances from "./dashboards/student/StudentGrievances";
-
+import Attendance from "./dashboards/student/Attendance";
 /* ---------- FACULTY ---------- */
 import FacultyDashboard from "./dashboards/faculty/FacultyDashboard";
 import FacultyNotices from "./dashboards/faculty/FacultyNotices";
@@ -35,16 +35,19 @@ import AdminGrievances from "./dashboards/admin/AdminGrievances";
 function ProtectedRoute({ children, allowedRole }) {
   const { user, role, loading } = useAuth();
 
-  if (loading) {
+  // Still loading auth or role
+  if (loading || (user && !role)) {
     return <p className="p-6 text-center">Loading...</p>;
   }
 
+  // Not logged in
   if (!user) {
     return <Navigate to="/login" replace />;
   }
 
+  // Logged in but wrong role
   if (allowedRole && role !== allowedRole) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return children;
@@ -103,7 +106,14 @@ export default function App() {
                 </ProtectedRoute>
               }
             />
-
+            <Route
+  path="/student/attendance"
+  element={
+    <ProtectedRoute allowedRole="student">
+      <Attendance />
+    </ProtectedRoute>
+  }
+/>
             {/* ===== FACULTY ===== */}
             <Route
               path="/faculty"
