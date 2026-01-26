@@ -1,53 +1,52 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import supabase from "../supabaseClient";
 
-const AuthContext = createContext();
+const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    let mounted = true;
-
-    const loadUser = async () => {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
-
-      if (!mounted) return;
-
-      if (session?.user) {
-        setUser(session.user);
-
-        const { data: userRow, error } = await supabase
-          .from("users")
-          .select("role")
-          .eq("id", session.user.id)
-          .maybeSingle();
-
-        if (!error && userRow?.role) {
-          setRole(userRow.role);
-        } else {
-          setRole(null);
-        }
-      } else {
-        setUser(null);
-        setRole(null);
-      }
-
+  const loadUser = async (session) => {
+    if (!session?.user) {
+      setUser(null);
+      setRole(null);
       setLoading(false);
-    };
+      return;
+    }
 
-    loadUser();
+    setUser(session.user);
 
-    const { data: listener } = supabase.auth.onAuthStateChange(() => {
-      loadUser();
+    const { data, error } = await supabase
+      .from("users")
+      .select("role")
+      .eq("id", session.user.id)
+      .single();
+
+    if (!error && data?.role) {
+      setRole(data.role);
+    } else {
+      setRole(null);
+    }
+
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    // Initial session
+    supabase.auth.getSession().then(({ data }) => {
+      loadUser(data.session);
     });
 
+    // Auth change listener
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        loadUser(session);
+      }
+    );
+
     return () => {
-      mounted = false;
       listener.subscription.unsubscribe();
     };
   }, []);

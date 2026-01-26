@@ -1,174 +1,200 @@
-import { useEffect, useState, useCallback } from "react";
-import { Link } from "react-router-dom";
-import { Bell, Download, MessageSquare } from "lucide-react";
-
+import { useEffect, useState } from "react";
 import supabase from "../../supabaseClient";
-import API from "../../api";
-import { useAuth } from "../../context/AuthContext";
-import StatsCard from "../../components/StatsCard";
 
 export default function StudentDashboard() {
-  const { user, loading: authLoading } = useAuth();
-
-  const [student, setStudent] = useState(null);
+  const [attendancePct, setAttendancePct] = useState(0);
+  const [marksStatus, setMarksStatus] = useState("Pending");
+  const [todayClasses, setTodayClasses] = useState([]);
   const [notices, setNotices] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const loadDashboard = useCallback(async () => {
-    if (!user) return;
-
-    try {
-      // 🔹 Student profile
-      const { data, error } = await supabase
-        .from("students")
-        .select("*")
-        .eq("user_id", user.id)
-        .single();
-
-      if (error) throw error;
-      setStudent(data);
-
-      // 🔹 Notices
-      const res = await API.get("/notices?role=student");
-      setNotices(res.data || []);
-    } catch (err) {
-      console.error("Student dashboard error:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [user]);
-
   useEffect(() => {
     loadDashboard();
-  }, [loadDashboard]);
+  }, []);
 
-  if (authLoading || loading) {
-    return (
-      <p className="p-10 text-center text-gray-500">
-        Loading dashboard...
-      </p>
-    );
-  }
+  const loadDashboard = async () => {
+    setLoading(true);
 
-  if (!student) {
-    return (
-      <p className="p-10 text-center text-red-500">
-        Student profile not found
-      </p>
-    );
-  }
+    /* ================= AUTH ================= */
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      setLoading(false);
+      return;
+    }
+
+    /* ================= STUDENT (SAFE FETCH) ================= */
+    let { data: student } = await supabase
+      .from("students")
+      .select("id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+
+    /* ---------- AUTO CREATE STUDENT ---------- */
+    if (!student) {
+      const { data: newStudent, error } = await supabase
+        .from("students")
+        .insert({
+          user_id: user.id,
+          roll_number: "TEMP",
+          department: "Not Assigned",
+          year: 0,
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error(error);
+        setLoading(false);
+        return;
+      }
+
+      student = newStudent;
+    }
+
+    /* ================= ATTENDANCE % (OVERALL) ================= */
+    const { data: attRows } = await supabase
+      .from("attendance")
+      .select("status")
+      .eq("student_id", student.id);
+
+    if (!attRows || attRows.length === 0) {
+      setAttendancePct(0);
+    } else {
+      const present = attRows.filter((a) => a.status).length;
+      setAttendancePct(
+        Math.round((present / attRows.length) * 100)
+      );
+    }
+
+    /* ================= MARKS STATUS ================= */
+    const { data: subjects } = await supabase
+      .from("student_subjects")
+      .select("subject_id")
+      .eq("student_id", student.id);
+
+    let pending = false;
+
+    for (const s of subjects || []) {
+      const { data: mark } = await supabase
+        .from("marks")
+        .select("id")
+        .eq("student_id", student.id)
+        .eq("subject_id", s.subject_id)
+        .maybeSingle();
+
+      if (!mark) {
+        pending = true;
+        break;
+      }
+    }
+
+    setMarksStatus(pending ? "Pending" : "Available");
+
+    /* ================= TODAY’S CLASSES ================= */
+    const today = new Date().toLocaleString("en-US", {
+      weekday: "long",
+    });
+
+    const subjectIds = subjects?.map((s) => s.subject_id) || [];
+
+    if (subjectIds.length > 0) {
+      const { data } = await supabase
+        .from("faculty_timetable")
+        .select(
+          `
+          period,
+          subjects ( name )
+        `
+        )
+        .eq("day", today)
+        .in("subject_id", subjectIds)
+        .order("period");
+
+      setTodayClasses(data || []);
+    } else {
+      setTodayClasses([]);
+    }
+
+    /* ================= NOTICES ================= */
+    const { data: noticeRows } = await supabase
+      .from("notices")
+      .select("title")
+      .in("target_role", ["student", "all"])
+      .order("created_at", { ascending: false })
+      .limit(5);
+
+    setNotices(noticeRows || []);
+
+    setLoading(false);
+  };
+
+  if (loading) return <p className="p-6">Loading dashboard...</p>;
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {/* ================= HEADER ================= */}
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-10">
-        <h1 className="text-3xl font-bold">
-          🎓 Student Dashboard
-        </h1>
-        <p className="text-white/80 mt-1">
-          Welcome back, {student.roll_number || "Student"}
-        </p>
+    <div className="p-6 space-y-6">
+      <h1 className="text-2xl font-semibold">
+        Student Dashboard
+      </h1>
+
+      {/* ================= TOP CARDS ================= */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-red-100 p-5 rounded shadow">
+          <p className="text-sm text-gray-600">Attendance</p>
+          <p className="text-2xl font-bold">
+            {attendancePct}%
+          </p>
+        </div>
+
+        <div className="bg-green-100 p-5 rounded shadow">
+          <p className="text-sm text-gray-600">Marks</p>
+          <p className="text-2xl font-bold">
+            {marksStatus}
+          </p>
+        </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* ================= STATS ================= */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <StatsCard
-            value={student.department}
-            label="Department"
-            delay={0.1}
-          />
-          <StatsCard
-            value={`Year ${student.year}`}
-            label="Academic Year"
-            delay={0.2}
-          />
-          <StatsCard
-            value={student.roll_number || "—"}
-            label="Roll Number"
-            delay={0.3}
-          />
-          <StatsCard
-            value={student.phone || "—"}
-            label="Phone"
-            delay={0.4}
-          />
-        </div>
+      {/* ================= TODAY CLASSES ================= */}
+      <div className="bg-white p-5 rounded shadow">
+        <h2 className="font-semibold mb-2">
+          📅 Today’s Classes
+        </h2>
 
-        {/* ================= QUICK ACTIONS ================= */}
-        <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <ActionCard
-            title="Notices"
-            icon={<Bell />}
-            link="/student/notices"
-            color="from-blue-500 to-indigo-500"
-          />
-          <ActionCard
-            title="Downloads"
-            icon={<Download />}
-            link="/student/downloads"
-            color="from-green-500 to-emerald-500"
-          />
-          <ActionCard
-            title="Grievances"
-            icon={<MessageSquare />}
-            link="/student/grievances"
-            color="from-orange-500 to-red-500"
-          />
-        </div>
-
-        {/* ================= RECENT NOTICES ================= */}
-        <div>
-          <h2 className="text-xl font-bold mb-4">
-            📢 Recent Notices
-          </h2>
-
-          {notices.length === 0 && (
-            <p className="text-gray-500">
-              No notices available
-            </p>
-          )}
-
-          <div className="grid md:grid-cols-2 gap-6">
-            {notices.slice(0, 4).map((n) => (
-              <div
-                key={n.id}
-                className="bg-white p-6 rounded-xl shadow"
-              >
-                <h3 className="font-semibold mb-2">
-                  {n.title}
-                </h3>
-                <p className="text-sm text-gray-600 line-clamp-2">
-                  {n.description}
-                </p>
-                <p className="text-xs text-gray-400 mt-3">
-                  {new Date(n.created_at).toLocaleDateString()}
-                </p>
-              </div>
+        {todayClasses.length === 0 ? (
+          <p className="text-gray-500">
+            No classes today
+          </p>
+        ) : (
+          <ul className="list-disc ml-6">
+            {todayClasses.map((c, i) => (
+              <li key={i}>
+                Period {c.period} — {c.subjects.name}
+              </li>
             ))}
-          </div>
-        </div>
+          </ul>
+        )}
+      </div>
+
+      {/* ================= NOTICES ================= */}
+      <div className="bg-white p-5 rounded shadow">
+        <h2 className="font-semibold mb-2">
+          📢 Recent Notices
+        </h2>
+
+        {notices.length === 0 ? (
+          <p className="text-gray-500">
+            No notices
+          </p>
+        ) : (
+          <ul className="list-disc ml-6">
+            {notices.map((n, i) => (
+              <li key={i}>{n.title}</li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
-  );
-}
-
-/* ---------------- SUB COMPONENT ---------------- */
-
-function ActionCard({ title, icon, link, color }) {
-  return (
-    <Link to={link}>
-      <div
-        className={`p-6 rounded-xl text-white bg-gradient-to-r ${color} shadow hover:scale-105 transition`}
-      >
-        <div className="flex items-center gap-3 text-xl font-bold">
-          {icon}
-          {title}
-        </div>
-        <p className="text-sm text-white/90 mt-2">
-          Click to open
-        </p>
-      </div>
-    </Link>
   );
 }

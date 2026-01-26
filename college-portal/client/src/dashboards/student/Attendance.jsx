@@ -1,125 +1,120 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import supabase from "../../supabaseClient";
-import { useAuth } from "../../context/AuthContext";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
 
 export default function Attendance() {
-  const { user } = useAuth();
-
-  const [records, setRecords] = useState([]);
+  const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchAttendance = useCallback(async () => {
+  useEffect(() => {
+    loadAttendance();
+  }, []);
+
+  const loadAttendance = async () => {
+    setLoading(true);
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return;
 
-    try {
-      const { data, error } = await supabase
+    /* ---------- STUDENT ID ---------- */
+    const { data: student } = await supabase
+      .from("students")
+      .select("id")
+      .eq("user_id", user.id)
+      .single();
+
+    if (!student) return;
+
+    /* ---------- SUBJECTS ---------- */
+    const { data: subjectRows } = await supabase
+      .from("student_subjects")
+      .select(
+        `
+        subject_id,
+        subjects ( name )
+      `
+      )
+      .eq("student_id", student.id);
+
+    const result = [];
+
+    for (const s of subjectRows || []) {
+      const subjectId = s.subject_id;
+
+      const { count: total } = await supabase
         .from("attendance")
-        .select("subject, status")
-        .eq("student_id", user.id);
+        .select("*", { count: "exact", head: true })
+        .eq("student_id", student.id)
+        .eq("subject_id", subjectId);
 
-      if (error) throw error;
-      setRecords(data || []);
-    } catch (err) {
-      console.error("Attendance error:", err);
-    } finally {
-      setLoading(false);
+      const { count: present } = await supabase
+        .from("attendance")
+        .select("*", { count: "exact", head: true })
+        .eq("student_id", student.id)
+        .eq("subject_id", subjectId)
+        .eq("status", true);
+
+      const absent = (total || 0) - (present || 0);
+      const percent =
+        total && total > 0
+          ? Math.round((present / total) * 100)
+          : 0;
+
+      result.push({
+        subject: s.subjects.name,
+        total: total || 0,
+        present: present || 0,
+        absent,
+        percent,
+      });
     }
-  }, [user]);
 
-  useEffect(() => {
-    fetchAttendance();
-  }, [fetchAttendance]);
+    setRows(result);
+    setLoading(false);
+  };
 
-  // 🔹 Calculate summary
-  let present = 0;
-  let absent = 0;
-
-  records.forEach((r) => {
-    if (r.status === "present") present++;
-    if (r.status === "absent") absent++;
-  });
-
-  const total = present + absent;
-  const overallPercent = total
-    ? Math.round((present / total) * 100)
-    : 0;
-
-  const chartData = [
-    { name: "Present", value: present },
-    { name: "Absent", value: absent },
-  ];
-
-  if (loading) {
-    return <p className="p-10 text-center">Loading attendance...</p>;
-  }
+  if (loading) return <p>Loading attendance...</p>;
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <h1 className="text-2xl font-bold mb-6">📊 Attendance Overview</h1>
+    <div className="p-6 bg-white rounded shadow">
+      <h1 className="text-xl font-semibold mb-4">
+        Attendance Overview
+      </h1>
 
-      {/* ================= OVERALL CARD ================= */}
-      <div className="bg-white rounded-xl shadow p-6 mb-10">
-        <p className="text-gray-500">Overall Attendance</p>
-        <h2 className="text-4xl font-bold mt-1">
-          {overallPercent}%
-        </h2>
-        {overallPercent < 75 && (
-          <p className="text-red-600 font-semibold mt-1">
-            ⚠ Attendance below required limit
-          </p>
-        )}
-      </div>
-
-      {/* ================= CHART ================= */}
-      <div className="bg-white rounded-xl shadow p-6 mb-10">
-        <h2 className="font-semibold mb-4">Present vs Absent</h2>
-
-        {total === 0 ? (
-          <p className="text-gray-500">
-            No attendance data available
-          </p>
-        ) : (
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={chartData}>
-              <XAxis dataKey="name" />
-              <YAxis allowDecimals={false} />
-              <Tooltip />
-              <Bar dataKey="value" />
-            </BarChart>
-          </ResponsiveContainer>
-        )}
-      </div>
-
-      {/* ================= SUMMARY TABLE ================= */}
-      {total > 0 && (
-        <div className="overflow-x-auto bg-white rounded-xl shadow">
-          <table className="w-full text-left">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="p-4">Status</th>
-                <th className="p-4">Count</th>
+      {rows.length === 0 ? (
+        <p className="text-gray-500">
+          No attendance records available.
+        </p>
+      ) : (
+        <table className="w-full border">
+          <thead>
+            <tr className="bg-gray-100">
+              <th className="border p-2">Subject</th>
+              <th className="border p-2">Total</th>
+              <th className="border p-2">Present</th>
+              <th className="border p-2">Absent</th>
+              <th className="border p-2">%</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r, i) => (
+              <tr key={i}>
+                <td className="border p-2">{r.subject}</td>
+                <td className="border p-2 text-center">{r.total}</td>
+                <td className="border p-2 text-center text-green-600">
+                  {r.present}
+                </td>
+                <td className="border p-2 text-center text-red-600">
+                  {r.absent}
+                </td>
+                <td className="border p-2 text-center font-semibold">
+                  {r.percent}%
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              <tr className="border-t">
-                <td className="p-4 font-medium">Present</td>
-                <td className="p-4">{present}</td>
-              </tr>
-              <tr className="border-t">
-                <td className="p-4 font-medium">Absent</td>
-                <td className="p-4">{absent}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );

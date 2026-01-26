@@ -1,42 +1,32 @@
 import { useEffect, useState } from "react";
-import API from "../../api";
+import supabase from "../../supabaseClient";
 
 export default function StudentNotices() {
   const [notices, setNotices] = useState([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchNotices();
   }, []);
 
   const fetchNotices = async () => {
-    try {
-      const response = await API.get("/notices?role=student");
-      setNotices(response.data || []);
-    } catch (err) {
-      console.error("Failed to fetch notices", err);
-    } finally {
-      setLoading(false);
-    }
+    const { data } = await supabase
+      .from("notices")
+      .select("*")
+      .in("audience", ["student", "both"])
+      .order("created_at", { ascending: false });
+
+    setNotices(data || []);
   };
 
-  if (loading) {
-    return <p style={{ padding: "30px" }}>Loading notices...</p>;
-  }
-
   return (
-    <div className="container" style={{ padding: "30px" }}>
-      <h2>📢 Latest Notices</h2>
-
-      {notices.length === 0 && (
-        <p style={{ marginTop: "20px" }}>No notices available</p>
-      )}
+    <div className="p-6">
+      <h1 className="text-xl font-semibold mb-4">Student Notices</h1>
 
       {notices.map((n) => (
-        <div key={n.id} className="card" style={{ marginTop: "15px" }}>
-          <h4>{n.title}</h4>
-          <p>{n.description}</p>
-          <small>
+        <div key={n.id} className="border p-3 rounded mb-2">
+          <h3 className="font-semibold">{n.title}</h3>
+          <p>{n.content}</p>
+          <small className="text-gray-500">
             {new Date(n.created_at).toLocaleString()}
           </small>
         </div>

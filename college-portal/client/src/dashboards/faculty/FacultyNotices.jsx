@@ -1,23 +1,34 @@
 import { useEffect, useState } from "react";
-import API from "../../api";
+import supabase from "../../supabaseClient";
 
 export default function FacultyNotices() {
   const [notices, setNotices] = useState([]);
 
   useEffect(() => {
-    API.get("/notices?role=faculty")
-      .then(response => setNotices(response.data));
+    fetchNotices();
   }, []);
 
-  return (
-    <div className="container" style={{ padding: "30px" }}>
-      <h2>📢 Faculty Notices</h2>
+  const fetchNotices = async () => {
+    const { data } = await supabase
+      .from("notices")
+      .select("*")
+      .in("audience", ["faculty", "both"])
+      .order("created_at", { ascending: false });
 
-      {notices.map(n => (
-        <div key={n.id} className="card" style={{ marginTop: "15px" }}>
-          <h4>{n.title}</h4>
-          <p>{n.description}</p>
-          <small>{new Date(n.created_at).toLocaleDateString()}</small>
+    setNotices(data || []);
+  };
+
+  return (
+    <div className="p-6">
+      <h1 className="text-xl font-semibold mb-4">Faculty Notices</h1>
+
+      {notices.map((n) => (
+        <div key={n.id} className="border p-3 rounded mb-2">
+          <h3 className="font-semibold">{n.title}</h3>
+          <p>{n.content}</p>
+          <small className="text-gray-500">
+            {new Date(n.created_at).toLocaleString()}
+          </small>
         </div>
       ))}
     </div>
