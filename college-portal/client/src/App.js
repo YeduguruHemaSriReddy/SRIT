@@ -30,15 +30,16 @@ import Marks from "./dashboards/student/Marks";
 import StudentMaterials from "./dashboards/student/StudentMaterials";
 import StudentTimetable from "./dashboards/student/StudentTimetable";
 import StudentNotices from "./dashboards/student/StudentNotices";
-import StudentDownloads from "./dashboards/student/StudentDownloads";
 import StudentProfile from "./dashboards/student/StudentProfile";
-
+import StudentGrievances from "./dashboards/student/StudentGrievances";
+import StudentFees from "./dashboards/student/StudentFees";
+import ExamRegistration from "./dashboards/student/ExamRegistration";
+import StudentIDCard from "./dashboards/student/StudentIdCard";
 /* ---------- FACULTY ---------- */
 import FacultyLayout from "./dashboards/faculty/FacultyLayout";
 import FacultyDashboard from "./dashboards/faculty/FacultyDashboard";
 import FacultySubjects from "./dashboards/faculty/FacultySubjects";
 import FacultyNotices from "./dashboards/faculty/FacultyNotices";
-import FacultyDownloads from "./dashboards/faculty/FacultyDownloads";
 import FacultyAttendance from "./dashboards/faculty/FacultyAttendance";
 import FacultyMaterials from "./dashboards/faculty/FacultyMaterials";
 import FacultyMarks from "./dashboards/faculty/FacultyMarks";
@@ -46,12 +47,21 @@ import FacultyProfile from "./dashboards/faculty/FacultyProfile";
 import FacultyTimetable from "./dashboards/faculty/FacultyTimetable";
 import FacultyCertifications from "./dashboards/faculty/FacultyCertifications";
 import FacultyAttendanceAnalytics from "./dashboards/faculty/FacultyAttendanceAnalytics";
+import LeaveRequests from "./dashboards/faculty/LeaveRequests";
+import FacultyAnnouncements from "./dashboards/faculty/FacultyAnnouncements"; 
+import FacultyMarksAnalytics from "./dashboards/faculty/FacultyMarksAnalytics";
 /* ---------- ADMIN ---------- */
+import AdminLayout from "./dashboards/admin/AdminLayout";
 import AdminDashboard from "./dashboards/admin/AdminDashboard";
+import AdminStudents from "./dashboards/admin/AdminStudents";
 import AdminNotices from "./dashboards/admin/AdminNotices";
-import AdminGrievances from "./dashboards/admin/AdminGrievances";
 import StudentAssign from "./dashboards/admin/StudentAssign";
-
+import AdminGrievances from "./dashboards/admin/AdminGrievances";
+import AdminTimetable from "./dashboards/admin/AdminTimetable";
+import AdminFacultySubject from "./dashboards/admin/AdminFacultySubject";
+import AdminFacultyLeaves from "./dashboards/admin/AdminFacultyLeaves";
+import AdminExamControl from "./dashboards/admin/AdminExamControl";
+import AdminFeeManagement from "./dashboards/admin/AdminFeeManagement";
 /* ---------- PROTECTED ROUTE ---------- */
 function ProtectedRoute({ children, allowedRole }) {
   const { user, role, loading } = useAuth();
@@ -100,17 +110,20 @@ export default function App() {
 
             {/* ===== STUDENT ===== */}
             <Route path="/student" element={<StudentLayout />}>
-  <Route path="dashboard" element={<StudentDashboard />} />
-  <Route path="attendance" element={<Attendance />} />
-  <Route path="marks" element={<Marks />} />
-  <Route path="materials" element={<StudentMaterials />} />
-  <Route path="timetable" element={<StudentTimetable />} />
-  <Route path="notices" element={<StudentNotices />} />
-  <Route path="downloads" element={<StudentDownloads />} />
-  <Route path="profile" element={<StudentProfile />} />
-</Route>
+              <Route path="dashboard" element={<StudentDashboard />} />
+              <Route path="attendance" element={<Attendance />} />
+              <Route path="marks" element={<Marks />} />
+              <Route path="materials" element={<StudentMaterials />} />
+              <Route path="timetable" element={<StudentTimetable />} />
+              <Route path="fees" element={<StudentFees />} />
+              <Route path="notices" element={<StudentNotices />} />
+              <Route path="grievances" element={<StudentGrievances />} />
+              <Route path="exam-registration" element={<ExamRegistration />} />
+              <Route path="profile" element={<StudentProfile />} />
+              <Route path="id-card" element={<StudentIDCard />} /> 
+            </Route>
 
-            {/* ===== FACULTY (NESTED CORRECTLY) ===== */}
+            {/* ===== FACULTY ===== */}
             <Route
               path="/faculty"
               element={
@@ -125,55 +138,43 @@ export default function App() {
               <Route path="profile" element={<FacultyProfile />} />
               <Route path="timetable" element={<FacultyTimetable />} />
               <Route path="materials" element={<FacultyMaterials />} />
-              <Route path="downloads" element={<FacultyDownloads />} />
               <Route path="certifications" element={<FacultyCertifications />} />
               <Route
                 path="attendance/:subjectId"
                 element={<FacultyAttendance />}
               />
               <Route
-  path="attendance-analytics"
-  element={<FacultyAttendanceAnalytics />}
-/>
-              <Route
-                path="marks/:subjectId"
-                element={<FacultyMarks />}
+                path="attendance-analytics"
+                element={<FacultyAttendanceAnalytics />}
               />
+              <Route path="announcements" element={<FacultyAnnouncements />} />
+              <Route path="marks/:subjectId" element={<FacultyMarks />} />
+              <Route path="marks-analytics" element={<FacultyMarksAnalytics />} />
+
+              {/* ✅ LEAVE ROUTE */}
+              <Route path="leave" element={<LeaveRequests />} />
             </Route>
 
             {/* ===== ADMIN ===== */}
-            <Route
-              path="/admin/dashboard"
-              element={
-                <ProtectedRoute allowedRole="admin">
-                  <AdminDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/notices"
-              element={
-                <ProtectedRoute allowedRole="admin">
-                  <AdminNotices />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/student-assign"
-              element={
-                <ProtectedRoute allowedRole="admin">
-                  <StudentAssign />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/grievances"
-              element={
-                <ProtectedRoute allowedRole="admin">
-                  <AdminGrievances />
-                </ProtectedRoute>
-              }
-            />
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route
+                path="dashboard"
+                element={
+                  <ProtectedRoute allowedRole="admin">
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="students" element={<AdminStudents />} />
+              <Route path="notices" element={<AdminNotices />} />
+              <Route path="timetable" element={<AdminTimetable />} />
+              <Route path="student-assign" element={<StudentAssign />} />
+              <Route path="faculty-leaves" element={<AdminFacultyLeaves />} />
+              <Route path="grievances" element={<AdminGrievances />} />
+              <Route path="faculty-subject" element={<AdminFacultySubject />} />
+              <Route path="exam-control" element={<AdminExamControl />} />
+              <Route path="fee-management" element={<AdminFeeManagement />} />
+            </Route>
 
             {/* ===== FALLBACK ===== */}
             <Route path="*" element={<Navigate to="/" />} />

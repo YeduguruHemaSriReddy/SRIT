@@ -5,7 +5,6 @@ import {
   ClipboardList,
   BookOpen,
   Bell,
-  Download,
   LogOut,
   User,
 } from "lucide-react";
@@ -31,7 +30,7 @@ export default function StudentLayout() {
           <SideLink to="/student/dashboard" icon={<LayoutDashboard size={18} />}>
             Dashboard
           </SideLink>
-
+          
           <SideLink to="/student/attendance" icon={<CalendarCheck size={18} />}>
             Attendance
           </SideLink>
@@ -47,13 +46,20 @@ export default function StudentLayout() {
           <SideLink to="/student/timetable" icon={<CalendarCheck size={18} />}>
             Timetable
           </SideLink>
-
+          <SideLink to="/student/fees" icon={<BookOpen size={18} />}>
+            Fees
+          </SideLink>
+          <SideLink to="/student/exam-registration" icon={<BookOpen size={18} />}>
+            Exam Registration
+          </SideLink>
           <SideLink to="/student/notices" icon={<Bell size={18} />}>
             Notices
           </SideLink>
-
-          <SideLink to="/student/downloads" icon={<Download size={18} />}>
-            Downloads
+          <SideLink to="/student/grievances" icon={<Bell size={18} />}>
+            Grievances
+          </SideLink>
+          <SideLink to="id-card">
+            Digital ID Card
           </SideLink>
 
           <button

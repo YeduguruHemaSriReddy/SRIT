@@ -4,36 +4,46 @@ import supabase from "../../supabaseClient";
 
 export default function FacultyMarks() {
   const { subjectId } = useParams();
+
   const [students, setStudents] = useState([]);
   const [marks, setMarks] = useState({});
-  const [loading, setLoading] = useState(true);
-  const [hasExistingMarks, setHasExistingMarks] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // 🔹 Fetch students + existing marks
-  const fetchStudentsAndMarks = useCallback(async () => {
+  /* ================= FETCH STUDENTS + MARKS ================= */
+  const fetchData = useCallback(async () => {
     setLoading(true);
 
-    const { data: studentData } = await supabase
+    // students mapped to subject
+    const { data: studentData, error: studentErr } = await supabase
       .from("student_subjects")
-      .select(
-        `
+      .select(`
         student_id,
-        students (
-          roll_number
-        )
-      `
-      )
+        students ( roll_number )
+      `)
       .eq("subject_id", subjectId);
 
-    const { data: marksData } = await supabase
+    if (studentErr) {
+      console.error(studentErr);
+      setLoading(false);
+      return;
+    }
+
+    // existing marks
+    const { data: marksData, error: marksErr } = await supabase
       .from("marks")
       .select("*")
       .eq("subject_id", subjectId);
 
-    const marksMap = {};
+    if (marksErr) {
+      console.error(marksErr);
+      setLoading(false);
+      return;
+    }
+
+    const map = {};
     marksData?.forEach((m) => {
-      marksMap[m.student_id] = {
+      map[m.student_id] = {
         internal_1: m.internal_1,
         internal_2: m.internal_2,
         assignment: m.assignment,
@@ -41,17 +51,19 @@ export default function FacultyMarks() {
     });
 
     setStudents(studentData || []);
-    setMarks(marksMap);
-    setHasExistingMarks((marksData || []).length > 0);
-    setIsEditing((marksData || []).length === 0); // auto edit if first time
+    setMarks(map);
+
+    // if no marks exist → allow editing by default
+    setIsEditing((marksData || []).length === 0);
+
     setLoading(false);
   }, [subjectId]);
 
   useEffect(() => {
-    fetchStudentsAndMarks();
-  }, [fetchStudentsAndMarks]);
+    fetchData();
+  }, [fetchData]);
 
-  // 🔹 Handle input
+  /* ================= HANDLE INPUT ================= */
   const handleChange = (studentId, field, value) => {
     if (!isEditing) return;
 
@@ -64,7 +76,7 @@ export default function FacultyMarks() {
     }));
   };
 
-  // 🔹 Save marks
+  /* ================= SAVE MARKS ================= */
   const saveMarks = async () => {
     const rows = students.map((s) => {
       const m = marks[s.student_id] || {};
@@ -90,27 +102,30 @@ export default function FacultyMarks() {
       });
 
     if (error) {
-      alert("Error saving marks");
+      alert("Failed to save marks");
+      console.error(error);
     } else {
       alert("Marks saved successfully");
-      setHasExistingMarks(true);
-      setIsEditing(false); // 🔒 lock again
+      setIsEditing(false);
     }
   };
 
-  if (loading) return <p className="p-6">Loading students...</p>;
+  /* ================= UI ================= */
+  if (loading) return <p className="p-6">Loading...</p>;
 
   return (
     <div className="p-6">
-      <h1 className="text-xl font-semibold mb-4">Internal Marks</h1>
+      <h1 className="text-xl font-semibold mb-4">
+        Internal Marks
+      </h1>
 
       {students.length === 0 ? (
-        <p>No students mapped.</p>
+        <p>No students mapped to this subject.</p>
       ) : (
         <>
-          <table className="w-full border">
-            <thead>
-              <tr className="bg-gray-100">
+          <table className="w-full border text-sm">
+            <thead className="bg-gray-100">
+              <tr>
                 <th className="border p-2">Roll No</th>
                 <th className="border p-2">Internal 1</th>
                 <th className="border p-2">Internal 2</th>
@@ -123,20 +138,14 @@ export default function FacultyMarks() {
                   <td className="border p-2">
                     {s.students.roll_number}
                   </td>
+
                   {["internal_1", "internal_2", "assignment"].map(
                     (field) => (
                       <td key={field} className="border p-2">
                         <input
                           type="number"
-                          className={`border p-1 w-full ${
-                            !isEditing
-                              ? "bg-gray-100 cursor-not-allowed"
-                              : ""
-                          }`}
                           disabled={!isEditing}
-                          value={
-                            marks[s.student_id]?.[field] ?? ""
-                          }
+                          value={marks[s.student_id]?.[field] ?? ""}
                           onChange={(e) =>
                             handleChange(
                               s.student_id,
@@ -144,6 +153,11 @@ export default function FacultyMarks() {
                               e.target.value
                             )
                           }
+                          className={`w-full border p-1 ${
+                            !isEditing
+                              ? "bg-gray-100 cursor-not-allowed"
+                              : ""
+                          }`}
                         />
                       </td>
                     )
@@ -154,7 +168,7 @@ export default function FacultyMarks() {
           </table>
 
           <div className="mt-4">
-            {!hasExistingMarks || isEditing ? (
+            {isEditing ? (
               <button
                 onClick={saveMarks}
                 className="bg-green-600 text-white px-6 py-2 rounded"

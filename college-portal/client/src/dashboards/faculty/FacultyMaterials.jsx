@@ -9,11 +9,11 @@ export default function FacultyMaterials() {
   const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // 🔹 Load faculty subjects
   useEffect(() => {
     fetchSubjects();
   }, []);
 
+  // 🔹 Load faculty subjects
   const fetchSubjects = async () => {
     const {
       data: { user },
@@ -46,14 +46,28 @@ export default function FacultyMaterials() {
     setMaterials(data || []);
   };
 
+  // 🔹 Detect file type (IMPORTANT)
+  const detectFileType = (file) => {
+    if (file.type.includes("pdf")) return "pdf";
+    if (file.type.includes("image")) return "image";
+    if (file.type.includes("video")) return "video";
+    if (file.type.includes("audio")) return "audio";
+    return "other";
+  };
+
   // 🔹 Upload material
   const uploadMaterial = async () => {
-    if (!title || !file || !selectedSubject) return alert("Fill all fields");
+    if (!title || !file || !selectedSubject) {
+      alert("Fill all fields");
+      return;
+    }
 
     setLoading(true);
 
+    const fileType = detectFileType(file);
     const filePath = `${selectedSubject}/${Date.now()}-${file.name}`;
 
+    // Upload to storage (ANY FILE TYPE)
     const { error: uploadError } = await supabase.storage
       .from("materials")
       .upload(filePath, file);
@@ -64,6 +78,7 @@ export default function FacultyMaterials() {
       return;
     }
 
+    // Get public URL
     const { data: publicUrl } = supabase.storage
       .from("materials")
       .getPublicUrl(filePath);
@@ -78,11 +93,13 @@ export default function FacultyMaterials() {
       .eq("user_id", user.id)
       .single();
 
+    // Save metadata to DB
     await supabase.from("materials").insert({
       title,
-      file_url: publicUrl.publicUrl,
       subject_id: selectedSubject,
       uploaded_by: faculty.id,
+      file_url: publicUrl.publicUrl,
+      file_type: fileType, // ✅ KEY LINE
     });
 
     setTitle("");
@@ -93,7 +110,9 @@ export default function FacultyMaterials() {
 
   return (
     <div className="p-6">
-      <h1 className="text-xl font-semibold mb-4">Study Materials</h1>
+      <h1 className="text-xl font-semibold mb-4">
+        Study Materials
+      </h1>
 
       {/* SUBJECT SELECT */}
       <select
@@ -121,6 +140,7 @@ export default function FacultyMaterials() {
 
           <input
             type="file"
+            accept="*/*"   // ✅ ACCEPT ANY FILE
             onChange={(e) => setFile(e.target.files[0])}
             className="mb-2"
           />
@@ -130,7 +150,7 @@ export default function FacultyMaterials() {
             disabled={loading}
             className="bg-green-600 text-white px-4 py-2 rounded"
           >
-            Upload
+            {loading ? "Uploading..." : "Upload"}
           </button>
         </div>
       )}
@@ -142,7 +162,13 @@ export default function FacultyMaterials() {
             key={m.id}
             className="p-3 bg-gray-50 rounded flex justify-between"
           >
-            <span>{m.title}</span>
+            <span>
+              {m.title}{" "}
+              <span className="text-xs text-gray-500">
+                ({m.file_type || "file"})
+              </span>
+            </span>
+
             <a
               href={m.file_url}
               target="_blank"

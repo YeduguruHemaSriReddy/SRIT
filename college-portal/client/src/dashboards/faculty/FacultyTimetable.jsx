@@ -21,42 +21,43 @@ const PERIOD_LABELS = [
 ];
 
 export default function FacultyTimetable() {
-  const [timetable, setTimetable] = useState([]);
+  const [timetable, setTimetable] = useState({});
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadTimetable = async () => {
-      setLoading(true);
-
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data: faculty } = await supabase
-        .from("faculty")
-        .select("id")
-        .eq("user_id", user.id)
-        .single();
-
-      if (!faculty) return;
-
-      const { data } = await supabase
-        .from("faculty_timetable")
-        .select("day, period, subjects(name)")
-        .eq("faculty_id", faculty.id);
-
-      setTimetable(data || []);
-      setLoading(false);
-    };
-
     loadTimetable();
   }, []);
 
-  const getSubject = (day, period) =>
-    timetable.find(
-      (t) => t.day === day && t.period === period
-    )?.subjects?.name || "—";
+  const loadTimetable = async () => {
+    setLoading(true);
+
+    /* ---------- AUTH ---------- */
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    /* ---------- FACULTY ---------- */
+    const { data: faculty } = await supabase
+      .from("faculty")
+      .select("id")
+      .eq("user_id", user.id)
+      .single();
+
+    if (!faculty) return;
+
+    /* ---------- TIMETABLE ---------- */
+    const { data: rows } = await supabase
+      .from("faculty_timetable")
+      .select("day, period, subjects(name)")
+      .eq("faculty_id", faculty.id);
+
+    const map = {};
+    rows?.forEach((r) => {
+      map[`${r.day}-${r.period}`] = r.subjects?.name;
+    });
+
+    setTimetable(map);
+    setLoading(false);
+  };
 
   if (loading) return <p className="p-6">Loading timetable...</p>;
 
@@ -67,8 +68,8 @@ export default function FacultyTimetable() {
       </h2>
 
       <table className="w-full border text-sm">
-        <thead>
-          <tr className="bg-gray-100">
+        <thead className="bg-gray-100">
+          <tr>
             <th className="border p-2">Day</th>
             {PERIOD_LABELS.map((label, i) => (
               <th key={i} className="border p-2">
@@ -86,13 +87,10 @@ export default function FacultyTimetable() {
               </td>
 
               {[1, 2, 3, "L", 4, 5, 6].map((p, i) => (
-                <td
-                  key={i}
-                  className="border p-2 text-center"
-                >
+                <td key={i} className="border p-2 text-center">
                   {p === "L"
                     ? "🍴 Lunch"
-                    : getSubject(day, p)}
+                    : timetable[`${day}-${p}`] || "—"}
                 </td>
               ))}
             </tr>
@@ -101,7 +99,7 @@ export default function FacultyTimetable() {
       </table>
 
       <p className="mt-3 text-sm text-gray-500">
-        Timetable is managed by the Admin and is read-only for faculty.
+        Timetable is managed by Admin and is read-only for faculty.
       </p>
     </div>
   );

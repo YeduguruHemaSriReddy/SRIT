@@ -4,12 +4,12 @@ import {
   BookOpen,
   Bell,
   Upload,
-  Download,
   LogOut,
   User,
   Calendar,
   Award,
   BarChart,
+  Clipboard,
 } from "lucide-react";
 import supabase from "../../supabaseClient";
 
@@ -30,39 +30,46 @@ export default function FacultyLayout() {
         </div>
 
         <nav className="px-4 space-y-2">
-          <SidebarLink to="/faculty/dashboard" icon={<LayoutDashboard size={18} />}>
+          <SidebarLink to="dashboard" icon={<LayoutDashboard size={18} />}>
             Dashboard
           </SidebarLink>
 
-          <SidebarLink to="/faculty/subjects" icon={<BookOpen size={18} />}>
+          <SidebarLink to="subjects" icon={<BookOpen size={18} />}>
             Subjects
           </SidebarLink>
 
-          <SidebarLink to="/faculty/materials" icon={<Upload size={18} />}>
+          <SidebarLink to="materials" icon={<Upload size={18} />}>
             Materials
           </SidebarLink>
-          <SidebarLink to="/faculty/timetable" icon={<Calendar size={18} />}>
-  Timetable
+
+          <SidebarLink to="timetable" icon={<Calendar size={18} />}>
+            Timetable
+          </SidebarLink>
+
+          <SidebarLink to="certifications" icon={<Award size={18} />}>
+            Certifications
+          </SidebarLink>
+
+          <SidebarLink
+            to="attendance-analytics"
+            icon={<BarChart size={18} />}
+          >
+            Attendance Analytics
+          </SidebarLink>
+
+          {/* ✅ NEW LEAVE LINK */}
+          <SidebarLink to="leave" icon={<Clipboard size={18} />}>
+            Leave Requests
+          </SidebarLink>
+          <SidebarLink to="marks-analytics">
+  Marks Analytics
 </SidebarLink>
-<SidebarLink
-  to="/faculty/certifications"
-  icon={<Award size={18} />}
->
-  Certifications
-</SidebarLink>
-          <SidebarLink to="/faculty/notices" icon={<Bell size={18} />}>
+          <SidebarLink to="notices" icon={<Bell size={18} />}>
             Notices
           </SidebarLink>
-          <SidebarLink
-  to="/faculty/attendance-analytics"
-  icon={<BarChart size={18} />}
->
-  Attendance Analytics
+<SidebarLink to="announcements" icon={<Bell size={18} />}>
+  Announcements
 </SidebarLink>
-
-          <SidebarLink to="/faculty/downloads" icon={<Download size={18} />}>
-            Downloads
-          </SidebarLink>
 
           <button
             onClick={logout}
@@ -79,7 +86,7 @@ export default function FacultyLayout() {
           <h2 className="font-semibold">Faculty Portal</h2>
 
           <button
-            onClick={() => navigate("/faculty/profile")}
+            onClick={() => navigate("profile")}
             className="flex items-center gap-2 hover:bg-gray-100 px-3 py-2 rounded"
           >
             <User size={18} /> Profile

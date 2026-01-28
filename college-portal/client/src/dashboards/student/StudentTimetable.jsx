@@ -34,7 +34,10 @@ export default function StudentTimetable() {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
 
     /* ---------- STUDENT ---------- */
     const { data: student } = await supabase
@@ -43,7 +46,10 @@ export default function StudentTimetable() {
       .eq("user_id", user.id)
       .single();
 
-    if (!student) return;
+    if (!student) {
+      setLoading(false);
+      return;
+    }
 
     /* ---------- STUDENT SUBJECTS ---------- */
     const { data: subs } = await supabase
@@ -61,25 +67,21 @@ export default function StudentTimetable() {
     /* ---------- TIMETABLE ---------- */
     const { data: rows } = await supabase
       .from("faculty_timetable")
-      .select(
-        `
-        day,
-        period,
-        subjects ( name )
-      `
-      )
+      .select("day, period, subjects(name)")
       .in("subject_id", subjectIds);
 
     const map = {};
     rows?.forEach((r) => {
-      map[`${r.day}-${r.period}`] = r.subjects.name;
+      map[`${r.day}-${r.period}`] = r.subjects?.name;
     });
 
     setTimetable(map);
     setLoading(false);
   };
 
-  if (loading) return <p className="p-6">Loading timetable...</p>;
+  if (loading) {
+    return <p className="p-6">Loading timetable...</p>;
+  }
 
   return (
     <div className="bg-white p-6 rounded shadow overflow-x-auto">
@@ -152,10 +154,11 @@ export default function StudentTimetable() {
   );
 }
 
+/* ---------- CELL ---------- */
 function Cell({ value }) {
   return (
     <td className="border p-2 text-center">
-      {value || (
+      {value ? value : (
         <span className="text-gray-400">Free</span>
       )}
     </td>

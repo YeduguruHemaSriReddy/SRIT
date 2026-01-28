@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import supabase from "../../supabaseClient";
 
 export default function StudentMarks() {
-  const [marks, setMarks] = useState([]);
+  const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -12,13 +12,12 @@ export default function StudentMarks() {
   const loadMarks = async () => {
     setLoading(true);
 
-    /* ---------- AUTH ---------- */
     const {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) return;
 
-    /* ---------- STUDENT ---------- */
+    // student
     const { data: student } = await supabase
       .from("students")
       .select("id")
@@ -27,88 +26,60 @@ export default function StudentMarks() {
 
     if (!student) return;
 
-    /* ---------- MARKS ---------- */
+    // marks
     const { data } = await supabase
       .from("marks")
-      .select(
-        `
-        exam_type,
-        marks_obtained,
-        total_marks,
+      .select(`
+        internal_1,
+        internal_2,
+        assignment,
+        total,
         subjects ( name )
-      `
-      )
-      .eq("student_id", student.id)
-      .order("created_at", { ascending: false });
+      `)
+      .eq("student_id", student.id);
 
-    setMarks(data || []);
+    setRows(data || []);
     setLoading(false);
   };
 
-  if (loading) {
-    return <p className="p-6">Loading marks...</p>;
+  if (loading) return <p className="p-6">Loading marks...</p>;
+
+  if (rows.length === 0) {
+    return <p className="p-6">Marks not published yet.</p>;
   }
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-4">
-        Marks Overview
-      </h1>
+      <h1 className="text-2xl font-semibold mb-4">My Marks</h1>
 
-      {marks.length === 0 ? (
-        <p className="text-gray-500">
-          Marks not published yet
-        </p>
-      ) : (
-        <div className="bg-white rounded shadow overflow-x-auto">
-          <table className="w-full border text-sm">
-            <thead>
-              <tr className="bg-gray-100">
-                <th className="border p-2">Subject</th>
-                <th className="border p-2">Exam</th>
-                <th className="border p-2">Marks</th>
-                <th className="border p-2">Grade</th>
-                <th className="border p-2">Status</th>
+      <div className="bg-white rounded shadow overflow-x-auto">
+        <table className="w-full border text-sm">
+          <thead className="bg-gray-100">
+            <tr>
+              <th className="border p-2">Subject</th>
+              <th className="border p-2">Internal 1</th>
+              <th className="border p-2">Internal 2</th>
+              <th className="border p-2">Assignment</th>
+              <th className="border p-2">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((m, i) => (
+              <tr key={i}>
+                <td className="border p-2 font-medium">
+                  {m.subjects.name}
+                </td>
+                <td className="border p-2">{m.internal_1}</td>
+                <td className="border p-2">{m.internal_2}</td>
+                <td className="border p-2">{m.assignment}</td>
+                <td className="border p-2 font-semibold">
+                  {m.total}
+                </td>
               </tr>
-            </thead>
-
-            <tbody>
-              {marks.map((m, i) => {
-                const percent =
-                  (m.marks_obtained / m.total_marks) *
-                  100;
-
-                let grade = "F";
-                if (percent >= 90) grade = "A+";
-                else if (percent >= 80) grade = "A";
-                else if (percent >= 70) grade = "B";
-                else if (percent >= 60) grade = "C";
-
-                return (
-                  <tr key={i}>
-                    <td className="border p-2">
-                      {m.subjects.name}
-                    </td>
-                    <td className="border p-2">
-                      {m.exam_type}
-                    </td>
-                    <td className="border p-2">
-                      {m.marks_obtained} /{" "}
-                      {m.total_marks}
-                    </td>
-                    <td className="border p-2 font-semibold">
-                      {grade}
-                    </td>
-                    <td className="border p-2 text-green-600">
-                      Published
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

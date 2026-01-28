@@ -54,20 +54,21 @@ export default function StudentDashboard() {
       student = newStudent;
     }
 
-    /* ================= ATTENDANCE % (OVERALL) ================= */
-    const { data: attRows } = await supabase
-      .from("attendance")
-      .select("status")
-      .eq("student_id", student.id);
+    /* ================= ATTENDANCE (OVERALL) ================= */
 
-    if (!attRows || attRows.length === 0) {
-      setAttendancePct(0);
-    } else {
-      const present = attRows.filter((a) => a.status).length;
-      setAttendancePct(
-        Math.round((present / attRows.length) * 100)
-      );
-    }
+const { data: attRows } = await supabase
+  .from("attendance")
+  .select("status, subject_id")
+  .eq("student_id", student.id);
+
+if (!attRows || attRows.length === 0) {
+  setAttendancePct(0);
+} else {
+  const total = attRows.length;
+  const present = attRows.filter(a => a.status === true).length;
+
+  setAttendancePct(Math.round((present / total) * 100));
+}
 
     /* ================= MARKS STATUS ================= */
     const { data: subjects } = await supabase
