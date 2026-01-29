@@ -7,6 +7,8 @@ import {
   Bell,
   LogOut,
   User,
+  Award,
+  IdCard,        // ✅ ADD THIS
 } from "lucide-react";
 import supabase from "../../supabaseClient";
 
@@ -27,38 +29,79 @@ export default function StudentLayout() {
         </div>
 
         <nav className="px-4 space-y-2">
-          <SideLink to="/student/dashboard" icon={<LayoutDashboard size={18} />}>
+          <SideLink
+            to="/student/dashboard"
+            icon={<LayoutDashboard size={18} />}
+          >
             Dashboard
           </SideLink>
-          
-          <SideLink to="/student/attendance" icon={<CalendarCheck size={18} />}>
+
+          <SideLink
+            to="/student/attendance"
+            icon={<CalendarCheck size={18} />}
+          >
             Attendance
           </SideLink>
 
-          <SideLink to="/student/marks" icon={<ClipboardList size={18} />}>
+          <SideLink
+            to="/student/marks"
+            icon={<ClipboardList size={18} />}
+          >
             Marks
           </SideLink>
 
-          <SideLink to="/student/materials" icon={<BookOpen size={18} />}>
+          <SideLink
+            to="/student/materials"
+            icon={<BookOpen size={18} />}
+          >
             Materials
           </SideLink>
 
-          <SideLink to="/student/timetable" icon={<CalendarCheck size={18} />}>
+          <SideLink
+            to="/student/timetable"
+            icon={<CalendarCheck size={18} />}
+          >
             Timetable
           </SideLink>
-          <SideLink to="/student/fees" icon={<BookOpen size={18} />}>
+
+          <SideLink
+            to="/student/fees"
+            icon={<BookOpen size={18} />}
+          >
             Fees
           </SideLink>
-          <SideLink to="/student/exam-registration" icon={<BookOpen size={18} />}>
+
+          <SideLink
+            to="/student/exam-registration"
+            icon={<ClipboardList size={18} />}
+          >
             Exam Registration
           </SideLink>
-          <SideLink to="/student/notices" icon={<Bell size={18} />}>
+
+          <SideLink
+            to="/student/notices"
+            icon={<Bell size={18} />}
+          >
             Notices
           </SideLink>
-          <SideLink to="/student/grievances" icon={<Bell size={18} />}>
+          <SideLink
+            to="/student/certifications"
+            icon={<Award size={18} />}
+          >
+            Certifications
+          </SideLink>
+          <SideLink
+            to="/student/grievances"
+            icon={<Bell size={18} />}
+          >
             Grievances
           </SideLink>
-          <SideLink to="id-card">
+
+          {/* ✅ DIGITAL ID CARD WITH ICON */}
+          <SideLink
+            to="/student/id-card"
+            icon={<IdCard size={18} />}
+          >
             Digital ID Card
           </SideLink>
 
@@ -66,7 +109,8 @@ export default function StudentLayout() {
             onClick={logout}
             className="flex gap-3 px-4 py-2 mt-6 text-red-600 hover:bg-red-50 w-full rounded"
           >
-            <LogOut size={18} /> Logout
+            <LogOut size={18} />
+            Logout
           </button>
         </nav>
       </aside>
@@ -80,7 +124,8 @@ export default function StudentLayout() {
             onClick={() => navigate("/student/profile")}
             className="flex items-center gap-2 hover:bg-gray-100 px-3 py-2 rounded"
           >
-            <User size={18} /> Profile
+            <User size={18} />
+            Profile
           </button>
         </header>
 
@@ -92,12 +137,13 @@ export default function StudentLayout() {
   );
 }
 
+/* ---------- SIDELINK COMPONENT ---------- */
 function SideLink({ to, icon, children }) {
   return (
     <NavLink
       to={to}
       className={({ isActive }) =>
-        `flex gap-3 px-4 py-2 rounded transition ${
+        `flex gap-3 items-center px-4 py-2 rounded transition ${
           isActive
             ? "bg-indigo-600 text-white"
             : "hover:bg-gray-100 text-gray-700"
@@ -105,7 +151,7 @@ function SideLink({ to, icon, children }) {
       }
     >
       {icon}
-      {children}
+      <span>{children}</span>
     </NavLink>
   );
 }

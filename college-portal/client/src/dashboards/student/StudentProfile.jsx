@@ -3,14 +3,24 @@ import supabase from "../../supabaseClient";
 
 export default function StudentProfile() {
   const [profile, setProfile] = useState(null);
-  const [form, setForm] = useState({
-    phone: "",
-    address: "",
-    bio: "",
-  });
   const [editMode, setEditMode] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+
+  const [form, setForm] = useState({
+    phone: "",
+    address: "",
+    dob: "",
+    gender: "",
+    blood_group: "",
+    father_name: "",
+    father_phone: "",
+    mother_name: "",
+    parent_income: "",
+    eamcet_rank: "",
+    eamcet_hallticket: "",
+    bio: "",
+  });
 
   useEffect(() => {
     loadProfile();
@@ -19,32 +29,34 @@ export default function StudentProfile() {
   const loadProfile = async () => {
     setLoading(true);
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      setLoading(false);
-      return;
-    }
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
 
     const { data, error } = await supabase
       .from("students")
-      .select(
-        "id, roll_number, department, year, phone, address, bio"
-      )
+      .select(`
+        id,
+        roll_number,
+        department,
+        year,
+        phone,
+        address,
+        dob,
+        gender,
+        blood_group,
+        father_name,
+        father_phone,
+        mother_name,
+        parent_income,
+        eamcet_rank,
+        eamcet_hallticket,
+        bio
+      `)
       .eq("user_id", user.id)
-      .maybeSingle();
+      .single();
 
     if (error) {
       console.error(error);
-      setLoading(false);
-      return;
-    }
-
-    if (!data) {
-      // No profile yet
-      setProfile(null);
       setLoading(false);
       return;
     }
@@ -53,6 +65,15 @@ export default function StudentProfile() {
     setForm({
       phone: data.phone || "",
       address: data.address || "",
+      dob: data.dob || "",
+      gender: data.gender || "",
+      blood_group: data.blood_group || "",
+      father_name: data.father_name || "",
+      father_phone: data.father_phone || "",
+      mother_name: data.mother_name || "",
+      parent_income: data.parent_income || "",
+      eamcet_rank: data.eamcet_rank || "",
+      eamcet_hallticket: data.eamcet_hallticket || "",
       bio: data.bio || "",
     });
 
@@ -78,93 +99,134 @@ export default function StudentProfile() {
     setSaving(false);
   };
 
-  if (loading) {
-    return <p className="p-6">Loading profile...</p>;
-  }
+  if (loading) return <p className="p-6">Loading profile...</p>;
+  if (!profile) return <p className="p-6 text-red-600">Profile not found</p>;
 
-  if (!profile) {
-    return (
-      <div className="p-6">
-        <p className="text-gray-500">
-          No profile found. Please contact admin.
-        </p>
+  const Row = ({ label, value }) => (
+    <div className="grid grid-cols-3 gap-4 py-2 border-b text-sm">
+      <div className="text-gray-500">{label}</div>
+      <div className="col-span-2 font-medium text-gray-900">
+        {value || "-"}
       </div>
-    );
-  }
+    </div>
+  );
 
   return (
-    <div className="p-6 max-w-2xl bg-white rounded shadow">
-      <h1 className="text-2xl font-semibold mb-4">
-        My Profile
-      </h1>
+    <div className="p-6 max-w-5xl">
+      <div className="bg-white rounded-xl shadow border p-6">
 
-      {/* VIEW MODE */}
-      {!editMode && (
-        <div className="space-y-2">
-          <p><b>Roll No:</b> {profile.roll_number}</p>
-          <p><b>Department:</b> {profile.department}</p>
-          <p><b>Year:</b> {profile.year}</p>
-          <p><b>Phone:</b> {profile.phone || "-"}</p>
-          <p><b>Address:</b> {profile.address || "-"}</p>
-          <p><b>About:</b> {profile.bio || "-"}</p>
+        {/* HEADER */}
+        <h1 className="text-2xl font-semibold mb-1">My Profile</h1>
+        <p className="text-sm text-gray-500 mb-6">
+          Academic and personal information maintained by the institute
+        </p>
 
-          <button
-            onClick={() => setEditMode(true)}
-            className="mt-4 bg-emerald-600 text-white px-4 py-2 rounded"
-          >
-            Edit Profile
-          </button>
-        </div>
-      )}
+        {/* ===== VIEW MODE ===== */}
+        {!editMode && (
+          <>
+            {/* ACADEMIC */}
+            <section className="mb-6">
+              <h2 className="text-lg font-semibold mb-3 text-indigo-600">
+                Academic Details
+              </h2>
+              <Row label="Roll Number" value={profile.roll_number} />
+              <Row label="Department" value={profile.department} />
+              <Row label="Year" value={profile.year} />
+            </section>
 
-      {/* EDIT MODE */}
-      {editMode && (
-        <div className="space-y-3">
-          <input
-            placeholder="Phone"
-            value={form.phone}
-            onChange={(e) =>
-              setForm({ ...form, phone: e.target.value })
-            }
-            className="w-full border px-3 py-2 rounded"
-          />
+            {/* PERSONAL */}
+            <section className="mb-6">
+              <h2 className="text-lg font-semibold mb-3 text-indigo-600">
+                Personal Details
+              </h2>
+              <Row label="Phone" value={profile.phone} />
+              <Row label="Address" value={profile.address} />
+              <Row label="Date of Birth" value={profile.dob} />
+              <Row label="Gender" value={profile.gender} />
+              <Row label="Blood Group" value={profile.blood_group} />
+            </section>
 
-          <input
-            placeholder="Address"
-            value={form.address}
-            onChange={(e) =>
-              setForm({ ...form, address: e.target.value })
-            }
-            className="w-full border px-3 py-2 rounded"
-          />
+            {/* FAMILY */}
+            <section className="mb-6">
+              <h2 className="text-lg font-semibold mb-3 text-indigo-600">
+                Family Details
+              </h2>
+              <Row label="Father Name" value={profile.father_name} />
+              <Row label="Father Phone" value={profile.father_phone} />
+              <Row label="Mother Name" value={profile.mother_name} />
+              <Row label="Annual Income" value={profile.parent_income} />
+            </section>
 
-          <textarea
-            placeholder="About you"
-            value={form.bio}
-            onChange={(e) =>
-              setForm({ ...form, bio: e.target.value })
-            }
-            className="w-full border px-3 py-2 rounded"
-          />
+            {/* ENTRANCE */}
+            <section className="mb-6">
+              <h2 className="text-lg font-semibold mb-3 text-indigo-600">
+                Entrance Examination
+              </h2>
+              <Row label="EAMCET Rank" value={profile.eamcet_rank} />
+              <Row label="EAMCET Hall Ticket" value={profile.eamcet_hallticket} />
+            </section>
 
-          <div className="flex gap-3">
+            {/* ABOUT */}
+            <section>
+              <h2 className="text-lg font-semibold mb-3 text-indigo-600">
+                About
+              </h2>
+              <p className="text-sm text-gray-800">
+                {profile.bio || "-"}
+              </p>
+            </section>
+
             <button
-              onClick={saveProfile}
-              disabled={saving}
-              className="bg-emerald-600 text-white px-5 py-2 rounded"
+              onClick={() => setEditMode(true)}
+              className="mt-6 bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg"
             >
-              {saving ? "Saving..." : "Save"}
+              Edit Profile
             </button>
+          </>
+        )}
 
-            <button
-              onClick={() => setEditMode(false)}
-              className="bg-gray-300 px-5 py-2 rounded"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
+        {/* ===== EDIT MODE ===== */}
+        {editMode && (
+          <>
+            <h2 className="text-lg font-semibold mb-4 text-indigo-600">
+              Edit Profile
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              {Object.entries(form).map(([key, value]) => (
+                <div key={key}>
+                  <label className="block text-gray-600 mb-1">
+                    {key.replaceAll("_", " ").toUpperCase()}
+                  </label>
+                  <input
+                    value={value}
+                    onChange={(e) =>
+                      setForm({ ...form, [key]: e.target.value })
+                    }
+                    className="w-full border rounded px-3 py-2"
+                  />
+                </div>
+              ))}
+            </div>
+
+            <div className="flex gap-4 mt-6">
+              <button
+                onClick={saveProfile}
+                disabled={saving}
+                className="bg-emerald-600 text-white px-6 py-2 rounded-lg"
+              >
+                {saving ? "Saving..." : "Save Changes"}
+              </button>
+              <button
+                onClick={() => setEditMode(false)}
+                className="bg-gray-300 px-6 py-2 rounded-lg"
+              >
+                Cancel
+              </button>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }

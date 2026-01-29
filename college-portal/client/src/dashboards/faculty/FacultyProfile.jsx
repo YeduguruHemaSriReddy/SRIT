@@ -78,18 +78,11 @@ export default function FacultyProfile() {
 
     const { error } = await supabase
       .from("faculty")
-      .update({
-        phone: form.phone,
-        qualification: form.qualification,
-        experience: form.experience,
-        office_room: form.office_room,
-        bio: form.bio,
-      })
+      .update(form)
       .eq("id", profile.id);
 
     if (error) {
       alert("Failed to update profile");
-      console.error(error);
     } else {
       alert("Profile updated successfully");
       setEditMode(false);
@@ -99,119 +92,154 @@ export default function FacultyProfile() {
     setSaving(false);
   };
 
-  if (loading) return <p>Loading profile...</p>;
-  if (!profile) return <p>No faculty profile found.</p>;
+  if (loading) return <p className="p-6">Loading profile...</p>;
+  if (!profile) return <p className="p-6 text-red-600">No faculty profile found</p>;
 
   return (
-    <div className="max-w-2xl bg-white p-6 rounded shadow space-y-4">
-      <h2 className="text-xl font-semibold">My Profile</h2>
+    <div className="p-6 max-w-3xl">
+      <div className="bg-white rounded-xl shadow border p-6">
 
-      {/* ===== READ-ONLY SECTION (ADMIN CONTROLLED) ===== */}
-      <div className="space-y-1 text-sm">
-        <p><b>Name:</b> {profile.name}</p>
-        <p><b>Department:</b> {profile.department}</p>
-        <p><b>Designation:</b> {profile.designation}</p>
+        {/* ===== HEADER ===== */}
+        <h1 className="text-2xl font-semibold mb-1">My Profile</h1>
+        <p className="text-sm text-gray-500 mb-4">
+          Professional information visible to students and administration
+        </p>
+
+        {/* ===== ADMIN CONTROLLED DETAILS ===== */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <div>
+            <p className="text-gray-500">Name</p>
+            <p className="font-medium">{profile.name}</p>
+          </div>
+
+          <div>
+            <p className="text-gray-500">Department</p>
+            <p className="font-medium">{profile.department}</p>
+          </div>
+
+          <div>
+            <p className="text-gray-500">Designation</p>
+            <p className="font-medium">{profile.designation}</p>
+          </div>
+        </div>
+
+        <hr className="my-5" />
+
+        {/* ===== VIEW MODE ===== */}
+        {!editMode && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div>
+              <p className="text-gray-500">Phone</p>
+              <p className="font-medium">{profile.phone || "-"}</p>
+            </div>
+
+            <div>
+              <p className="text-gray-500">Qualification</p>
+              <p className="font-medium">{profile.qualification || "-"}</p>
+            </div>
+
+            <div>
+              <p className="text-gray-500">Experience</p>
+              <p className="font-medium">
+                {profile.experience ? `${profile.experience} years` : "-"}
+              </p>
+            </div>
+
+            <div>
+              <p className="text-gray-500">Office Room</p>
+              <p className="font-medium">{profile.office_room || "-"}</p>
+            </div>
+
+            <div className="md:col-span-2">
+              <p className="text-gray-500">About</p>
+              <p className="font-medium">{profile.bio || "-"}</p>
+            </div>
+
+            <div className="md:col-span-2 mt-4">
+              <button
+                onClick={() => setEditMode(true)}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-2 rounded-lg"
+              >
+                Edit Profile
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* ===== EDIT MODE ===== */}
+        {editMode && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div>
+              <label className="text-gray-600">Phone</label>
+              <input
+                name="phone"
+                value={form.phone}
+                onChange={handleChange}
+                className="w-full border rounded px-3 py-2"
+              />
+            </div>
+
+            <div>
+              <label className="text-gray-600">Qualification</label>
+              <input
+                name="qualification"
+                value={form.qualification}
+                onChange={handleChange}
+                className="w-full border rounded px-3 py-2"
+              />
+            </div>
+
+            <div>
+              <label className="text-gray-600">Experience (years)</label>
+              <input
+                type="number"
+                name="experience"
+                value={form.experience}
+                onChange={handleChange}
+                className="w-full border rounded px-3 py-2"
+              />
+            </div>
+
+            <div>
+              <label className="text-gray-600">Office Room</label>
+              <input
+                name="office_room"
+                value={form.office_room}
+                onChange={handleChange}
+                className="w-full border rounded px-3 py-2"
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="text-gray-600">About</label>
+              <textarea
+                name="bio"
+                value={form.bio}
+                onChange={handleChange}
+                rows={3}
+                className="w-full border rounded px-3 py-2"
+              />
+            </div>
+
+            <div className="md:col-span-2 flex gap-3 mt-4">
+              <button
+                onClick={saveProfile}
+                disabled={saving}
+                className="bg-emerald-600 text-white px-6 py-2 rounded-lg"
+              >
+                {saving ? "Saving..." : "Save Changes"}
+              </button>
+
+              <button
+                onClick={() => setEditMode(false)}
+                className="bg-gray-300 px-6 py-2 rounded-lg"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
       </div>
-
-      <hr />
-
-      {/* ===== VIEW MODE ===== */}
-      {!editMode && (
-        <div className="space-y-2 text-sm">
-          <p><b>Phone:</b> {profile.phone || "-"}</p>
-          <p><b>Qualification:</b> {profile.qualification || "-"}</p>
-          <p><b>Experience:</b> {profile.experience || 0} years</p>
-          <p><b>Office Room:</b> {profile.office_room || "-"}</p>
-          <p><b>About:</b> {profile.bio || "-"}</p>
-
-          <button
-            onClick={() => setEditMode(true)}
-            className="mt-4 bg-emerald-600 text-white px-4 py-2 rounded"
-          >
-            Edit Profile
-          </button>
-        </div>
-      )}
-
-      {/* ===== EDIT MODE ===== */}
-      {editMode && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Phone */}
-          <div>
-            <label className="text-sm font-medium">Phone</label>
-            <input
-              name="phone"
-              value={form.phone}
-              onChange={handleChange}
-              className="w-full border rounded px-3 py-2"
-            />
-          </div>
-
-          {/* Qualification */}
-          <div>
-            <label className="text-sm font-medium">Qualification</label>
-            <input
-              name="qualification"
-              value={form.qualification}
-              onChange={handleChange}
-              className="w-full border rounded px-3 py-2"
-            />
-          </div>
-
-          {/* Experience */}
-          <div>
-            <label className="text-sm font-medium">
-              Experience (years)
-            </label>
-            <input
-              name="experience"
-              type="number"
-              value={form.experience}
-              onChange={handleChange}
-              className="w-full border rounded px-3 py-2"
-            />
-          </div>
-
-          {/* Office Room */}
-          <div>
-            <label className="text-sm font-medium">Office Room</label>
-            <input
-              name="office_room"
-              value={form.office_room}
-              onChange={handleChange}
-              className="w-full border rounded px-3 py-2"
-            />
-          </div>
-
-          {/* Bio */}
-          <div className="col-span-2">
-            <label className="text-sm font-medium">About</label>
-            <textarea
-              name="bio"
-              value={form.bio}
-              onChange={handleChange}
-              className="w-full border rounded px-3 py-2"
-            />
-          </div>
-
-          <div className="col-span-2 flex gap-3 mt-4">
-            <button
-              onClick={saveProfile}
-              disabled={saving}
-              className="bg-emerald-600 text-white px-6 py-2 rounded"
-            >
-              {saving ? "Saving..." : "Save"}
-            </button>
-
-            <button
-              onClick={() => setEditMode(false)}
-              className="bg-gray-300 px-6 py-2 rounded"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

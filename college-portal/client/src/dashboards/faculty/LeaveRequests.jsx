@@ -8,10 +8,12 @@ export default function LeaveRequests() {
   const [reason, setReason] = useState("");
   const [loading, setLoading] = useState(false);
 
+  useEffect(() => {
+    fetchLeaves();
+  }, []);
+
   const fetchLeaves = async () => {
-    const {
-      data: { user }
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
 
     const { data: faculty } = await supabase
       .from("faculty")
@@ -19,18 +21,14 @@ export default function LeaveRequests() {
       .eq("user_id", user.id)
       .single();
 
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from("faculty_leaves")
       .select("*")
       .eq("faculty_id", faculty.id)
       .order("created_at", { ascending: false });
 
-    if (!error) setLeaves(data);
+    setLeaves(data || []);
   };
-
-  useEffect(() => {
-    fetchLeaves();
-  }, []);
 
   const submitLeave = async () => {
     if (!fromDate || !toDate || !reason) {
@@ -39,15 +37,13 @@ export default function LeaveRequests() {
     }
 
     if (toDate < fromDate) {
-      alert("To date cannot be before From date");
+      alert("End date cannot be before start date");
       return;
     }
 
     setLoading(true);
 
-    const {
-      data: { user }
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
 
     const { data: faculty } = await supabase
       .from("faculty")
@@ -60,8 +56,9 @@ export default function LeaveRequests() {
         faculty_id: faculty.id,
         from_date: fromDate,
         to_date: toDate,
-        reason
-      }
+        reason,
+        status: "pending",
+      },
     ]);
 
     setLoading(false);
@@ -76,84 +73,140 @@ export default function LeaveRequests() {
     }
   };
 
-  const statusColor = (status) => {
-    if (status === "approved") return "text-green-600";
-    if (status === "rejected") return "text-red-600";
-    return "text-yellow-600";
+  const statusBadge = (status) => {
+    if (status === "approved")
+      return "bg-green-100 text-green-700";
+    if (status === "rejected")
+      return "bg-red-100 text-red-700";
+    return "bg-yellow-100 text-yellow-700";
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-semibold">Leave Requests</h1>
+    <div className="p-6 max-w-6xl space-y-8">
+      {/* ===== PAGE HEADER ===== */}
+      <div>
+        <h1 className="text-2xl font-semibold">Leave Requests</h1>
+        <p className="text-sm text-gray-500">
+          Apply for leave and track approval status
+        </p>
+      </div>
 
-      {/* Apply Leave */}
-      <div className="bg-white p-4 rounded shadow space-y-4">
-        <h2 className="font-medium">Apply for Leave</h2>
+      {/* ===== APPLY LEAVE CARD ===== */}
+      <div className="bg-white rounded-lg shadow border p-6 space-y-4">
+        <h2 className="text-lg font-medium">
+          Apply for Leave
+        </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <input
-            type="date"
-            value={fromDate}
-            onChange={(e) => setFromDate(e.target.value)}
-            className="border p-2 rounded"
-          />
-          <input
-            type="date"
-            value={toDate}
-            onChange={(e) => setToDate(e.target.value)}
-            className="border p-2 rounded"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label className="text-sm text-gray-600">
+              From Date
+            </label>
+            <input
+              type="date"
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
+              className="border rounded px-3 py-2 w-full"
+            />
+          </div>
+
+          <div>
+            <label className="text-sm text-gray-600">
+              To Date
+            </label>
+            <input
+              type="date"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+              className="border rounded px-3 py-2 w-full"
+            />
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="text-sm text-gray-600">
+              Reason
+            </label>
+            <input
+              type="text"
+              value={reason}
+              onChange={(e) => setReason(e.target.value)}
+              placeholder="Enter reason for leave"
+              className="border rounded px-3 py-2 w-full"
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-end">
           <button
             onClick={submitLeave}
             disabled={loading}
-            className="bg-blue-600 text-white rounded px-4 py-2"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-lg"
           >
-            {loading ? "Submitting..." : "Apply"}
+            {loading ? "Submitting..." : "Apply Leave"}
           </button>
         </div>
-
-        <textarea
-          placeholder="Reason for leave"
-          value={reason}
-          onChange={(e) => setReason(e.target.value)}
-          className="border p-2 rounded w-full"
-        />
       </div>
 
-      {/* Leave History */}
-      <div className="bg-white p-4 rounded shadow">
-        <h2 className="font-medium mb-4">Leave History</h2>
+      {/* ===== LEAVE HISTORY ===== */}
+      <div className="bg-white rounded-lg shadow border p-6">
+        <h2 className="text-lg font-medium mb-4">
+          Leave History
+        </h2>
 
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b">
-              <th className="text-left py-2">From</th>
-              <th className="text-left py-2">To</th>
-              <th className="text-left py-2">Reason</th>
-              <th className="text-left py-2">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {leaves.map((leave) => (
-              <tr key={leave.id} className="border-b">
-                <td className="py-2">{leave.from_date}</td>
-                <td className="py-2">{leave.to_date}</td>
-                <td className="py-2">{leave.reason}</td>
-                <td className={`py-2 font-medium ${statusColor(leave.status)}`}>
-                  {leave.status}
-                </td>
-              </tr>
-            ))}
+        {leaves.length === 0 ? (
+          <p className="text-gray-500 text-sm">
+            No leave requests submitted yet.
+          </p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm border">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="border px-3 py-2 text-left">
+                    From
+                  </th>
+                  <th className="border px-3 py-2 text-left">
+                    To
+                  </th>
+                  <th className="border px-3 py-2 text-left">
+                    Reason
+                  </th>
+                  <th className="border px-3 py-2 text-center">
+                    Status
+                  </th>
+                </tr>
+              </thead>
 
-            {leaves.length === 0 && (
-              <tr>
-                <td colSpan="4" className="py-4 text-center text-gray-500">
-                  No leave requests
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              <tbody>
+                {leaves.map((leave) => (
+                  <tr
+                    key={leave.id}
+                    className="hover:bg-gray-50"
+                  >
+                    <td className="border px-3 py-2">
+                      {leave.from_date}
+                    </td>
+                    <td className="border px-3 py-2">
+                      {leave.to_date}
+                    </td>
+                    <td className="border px-3 py-2">
+                      {leave.reason}
+                    </td>
+                    <td className="border px-3 py-2 text-center">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${statusBadge(
+                          leave.status
+                        )}`}
+                      >
+                        {leave.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

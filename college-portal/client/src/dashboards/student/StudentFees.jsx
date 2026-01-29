@@ -14,6 +14,7 @@ export default function StudentFees() {
     setLoading(true);
     setMessage("");
 
+    /* ---------- AUTH ---------- */
     const {
       data: { user },
     } = await supabase.auth.getUser();
@@ -24,10 +25,10 @@ export default function StudentFees() {
       return;
     }
 
-    // 1️⃣ Get student
+    /* ---------- STUDENT ---------- */
     const { data: student } = await supabase
       .from("students")
-      .select("id, department, year")
+      .select("id")
       .eq("user_id", user.id)
       .single();
 
@@ -37,13 +38,12 @@ export default function StudentFees() {
       return;
     }
 
-    // 2️⃣ Get fee structure
+    /* ---------- GET LATEST FEE STRUCTURE ---------- */
     const { data: feeStructure } = await supabase
-      .from("fees")
+      .from("fee_structure")
       .select("*")
-      .eq("department", student.department)
-      .eq("year", student.year)
-      .eq("semester", 1)
+      .order("created_at", { ascending: false })
+      .limit(1)
       .maybeSingle();
 
     if (!feeStructure) {
@@ -52,10 +52,10 @@ export default function StudentFees() {
       return;
     }
 
-    // 3️⃣ Get student fee status (may or may not exist)
+    /* ---------- STUDENT FEE STATUS ---------- */
     const { data: studentFee } = await supabase
       .from("student_fees")
-      .select("*")
+      .select("status, paid_on")
       .eq("student_id", student.id)
       .eq("fee_id", feeStructure.id)
       .maybeSingle();
@@ -63,11 +63,13 @@ export default function StudentFees() {
     setFee({
       ...feeStructure,
       status: studentFee?.status || "unpaid",
+      paid_on: studentFee?.paid_on || null,
     });
 
     setLoading(false);
   };
 
+  /* ---------- PAY NOW (SIMULATION) ---------- */
   const payNow = async () => {
     if (!fee) return;
 
@@ -85,13 +87,19 @@ export default function StudentFees() {
       student_id: student.id,
       fee_id: fee.id,
       status: "paid",
-      paid_at: new Date(),
+      paid_on: new Date(),
     });
 
     loadFees();
   };
 
-  if (loading) return <p className="p-6">Loading fees...</p>;
+  /* ---------- UI STATES ---------- */
+  if (loading)
+    return (
+      <p className="p-6 text-gray-500">
+        Loading fee details...
+      </p>
+    );
 
   if (message)
     return (
@@ -101,37 +109,58 @@ export default function StudentFees() {
     );
 
   return (
-    <div className="max-w-xl bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-semibold mb-4">Fee Details</h2>
+    <div className="p-6 max-w-xl mx-auto">
+      <div className="bg-white rounded shadow p-6 space-y-4">
+        <h2 className="text-2xl font-semibold">
+          Fee Details
+        </h2>
 
-      <p>Department: {fee.department}</p>
-      <p>Year: {fee.year}</p>
-      <p>Semester: {fee.semester}</p>
-      <p className="font-semibold text-lg mt-2">
-        Amount: ₹{fee.amount}
-      </p>
+        <div className="space-y-1 text-sm text-gray-700">
+          <p>
+            <b>Fee Name:</b> {fee.name}
+          </p>
 
-      <p className="mt-2">
-        Status:{" "}
-        <span
-          className={`font-medium ${
-            fee.status === "paid"
-              ? "text-green-600"
-              : "text-red-600"
-          }`}
-        >
-          {fee.status.toUpperCase()}
-        </span>
-      </p>
+          {fee.due_date && (
+            <p>
+              <b>Due Date:</b>{" "}
+              {new Date(fee.due_date).toLocaleDateString()}
+            </p>
+          )}
+        </div>
 
-      {fee.status !== "paid" && (
-        <button
-          onClick={payNow}
-          className="mt-4 bg-emerald-600 text-white px-4 py-2 rounded"
-        >
-          Pay Now
-        </button>
-      )}
+        <p className="text-3xl font-bold text-gray-900">
+          ₹ {fee.amount}
+        </p>
+
+        <p>
+          Status:{" "}
+          <span
+            className={`px-3 py-1 rounded-full text-sm font-medium ${
+              fee.status === "paid"
+                ? "bg-green-100 text-green-700"
+                : "bg-red-100 text-red-700"
+            }`}
+          >
+            {fee.status.toUpperCase()}
+          </span>
+        </p>
+
+        {fee.status === "paid" && fee.paid_on && (
+          <p className="text-sm text-green-600">
+            Paid on{" "}
+            {new Date(fee.paid_on).toLocaleDateString()}
+          </p>
+        )}
+
+        {fee.status !== "paid" && (
+          <button
+            onClick={payNow}
+            className="w-full mt-4 bg-emerald-600 hover:bg-emerald-700 text-white py-2 rounded"
+          >
+            Pay Now
+          </button>
+        )}
+      </div>
     </div>
   );
 }

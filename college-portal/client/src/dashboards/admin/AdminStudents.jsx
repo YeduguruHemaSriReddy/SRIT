@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
+import { Pencil, X } from "lucide-react";
 import supabase from "../../supabaseClient";
 
 const YEARS = [1, 2, 3, 4];
-const DEPARTMENTS = ["CSE", "ECE", "EEE", "MECH", "CIVIL"];
+const DEPARTMENTS = ["CSE", "ECE", "EEE", "MECH", "CIVIL", "CSM"];
 
 export default function AdminStudents() {
   const [students, setStudents] = useState([]);
@@ -23,8 +24,7 @@ export default function AdminStudents() {
         roll_number,
         department,
         year,
-        phone,
-        user_id
+        phone
       `)
       .order("roll_number");
 
@@ -45,118 +45,174 @@ export default function AdminStudents() {
     if (error) {
       alert("Failed to update student");
     } else {
-      alert("Student updated");
       setEditing(null);
       fetchStudents();
     }
   };
 
-  if (loading) return <p className="p-6">Loading students...</p>;
+  if (loading) {
+    return <p className="p-6">Loading students...</p>;
+  }
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-4">
-        Student Management
-      </h1>
+    <div className="space-y-6">
+      {/* ===== HEADER ===== */}
+      <div>
+        <h1 className="text-2xl font-semibold">
+          Student Management
+        </h1>
+        <p className="text-sm text-gray-500">
+          View and manage registered students
+        </p>
+      </div>
 
-      <div className="bg-white rounded shadow overflow-x-auto">
-        <table className="w-full border text-sm">
-          <thead className="bg-gray-100">
+      {/* ===== TABLE ===== */}
+      <div className="bg-white rounded-lg shadow border overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead className="bg-gray-50 border-b">
             <tr>
-              <th className="border p-2">Roll No</th>
-              <th className="border p-2">Department</th>
-              <th className="border p-2">Year</th>
-              <th className="border p-2">Phone</th>
-              <th className="border p-2">Action</th>
+              <th className="px-4 py-3 text-left">Roll No</th>
+              <th className="px-4 py-3 text-left">Department</th>
+              <th className="px-4 py-3 text-center">Year</th>
+              <th className="px-4 py-3 text-left">Phone</th>
+              <th className="px-4 py-3 text-center">Action</th>
             </tr>
           </thead>
+
           <tbody>
             {students.map((s) => (
-              <tr key={s.id}>
-                <td className="border p-2">{s.roll_number}</td>
-                <td className="border p-2">{s.department}</td>
-                <td className="border p-2">{s.year}</td>
-                <td className="border p-2">{s.phone || "-"}</td>
-                <td className="border p-2 text-center">
+              <tr
+                key={s.id}
+                className="border-b hover:bg-gray-50"
+              >
+                <td className="px-4 py-3 font-medium">
+                  {s.roll_number}
+                </td>
+                <td className="px-4 py-3">
+                  {s.department}
+                </td>
+                <td className="px-4 py-3 text-center">
+                  {s.year}
+                </td>
+                <td className="px-4 py-3">
+                  {s.phone || "-"}
+                </td>
+                <td className="px-4 py-3 text-center">
                   <button
                     onClick={() => setEditing({ ...s })}
-                    className="text-blue-600 underline"
+                    className="inline-flex items-center gap-1 text-purple-600 hover:underline"
                   >
+                    <Pencil size={14} />
                     Edit
                   </button>
                 </td>
               </tr>
             ))}
+
+            {students.length === 0 && (
+              <tr>
+                <td
+                  colSpan="5"
+                  className="text-center py-6 text-gray-500"
+                >
+                  No students found
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
 
-      {/* ================= EDIT MODAL ================= */}
+      {/* ===== EDIT MODAL ===== */}
       {editing && (
-        <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center">
-          <div className="bg-white p-6 rounded shadow w-full max-w-md">
-            <h2 className="text-lg font-semibold mb-4">
-              Edit Student
-            </h2>
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg shadow-lg w-full max-w-md">
+            {/* MODAL HEADER */}
+            <div className="flex justify-between items-center px-6 py-4 border-b">
+              <h2 className="text-lg font-semibold">
+                Edit Student
+              </h2>
+              <button onClick={() => setEditing(null)}>
+                <X size={18} />
+              </button>
+            </div>
 
-            <input
-              value={editing.roll_number}
-              onChange={(e) =>
-                setEditing({
-                  ...editing,
-                  roll_number: e.target.value,
-                })
-              }
-              className="w-full border px-3 py-2 rounded mb-3"
-              placeholder="Roll Number"
-            />
+            {/* MODAL BODY */}
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="text-sm text-gray-600">
+                  Roll Number
+                </label>
+                <input
+                  value={editing.roll_number}
+                  onChange={(e) =>
+                    setEditing({
+                      ...editing,
+                      roll_number: e.target.value,
+                    })
+                  }
+                  className="w-full border px-3 py-2 rounded mt-1"
+                />
+              </div>
 
-            <select
-              value={editing.department}
-              onChange={(e) =>
-                setEditing({
-                  ...editing,
-                  department: e.target.value,
-                })
-              }
-              className="w-full border px-3 py-2 rounded mb-3"
-            >
-              {DEPARTMENTS.map((d) => (
-                <option key={d} value={d}>
-                  {d}
-                </option>
-              ))}
-            </select>
+              <div>
+                <label className="text-sm text-gray-600">
+                  Department
+                </label>
+                <select
+                  value={editing.department}
+                  onChange={(e) =>
+                    setEditing({
+                      ...editing,
+                      department: e.target.value,
+                    })
+                  }
+                  className="w-full border px-3 py-2 rounded mt-1"
+                >
+                  {DEPARTMENTS.map((d) => (
+                    <option key={d} value={d}>
+                      {d}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
-            <select
-              value={editing.year}
-              onChange={(e) =>
-                setEditing({
-                  ...editing,
-                  year: Number(e.target.value),
-                })
-              }
-              className="w-full border px-3 py-2 rounded mb-4"
-            >
-              {YEARS.map((y) => (
-                <option key={y} value={y}>
-                  Year {y}
-                </option>
-              ))}
-            </select>
+              <div>
+                <label className="text-sm text-gray-600">
+                  Year
+                </label>
+                <select
+                  value={editing.year}
+                  onChange={(e) =>
+                    setEditing({
+                      ...editing,
+                      year: Number(e.target.value),
+                    })
+                  }
+                  className="w-full border px-3 py-2 rounded mt-1"
+                >
+                  {YEARS.map((y) => (
+                    <option key={y} value={y}>
+                      Year {y}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
 
-            <div className="flex justify-end gap-3">
+            {/* MODAL FOOTER */}
+            <div className="flex justify-end gap-3 px-6 py-4 border-t">
               <button
                 onClick={() => setEditing(null)}
-                className="px-4 py-2 bg-gray-300 rounded"
+                className="px-4 py-2 rounded bg-gray-200"
               >
                 Cancel
               </button>
               <button
                 onClick={saveChanges}
-                className="px-4 py-2 bg-purple-600 text-white rounded"
+                className="px-4 py-2 rounded bg-purple-600 text-white"
               >
-                Save
+                Save Changes
               </button>
             </div>
           </div>

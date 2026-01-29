@@ -4,8 +4,9 @@ import supabase from "../../supabaseClient";
 export default function ExamRegistration() {
   const [subjects, setSubjects] = useState([]);
   const [registered, setRegistered] = useState([]);
-  const [open, setOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     loadData();
@@ -13,36 +14,54 @@ export default function ExamRegistration() {
 
   const loadData = async () => {
     setLoading(true);
+    setMessage("");
 
+    /* ---------- EXAM WINDOW ---------- */
     const { data: window } = await supabase
       .from("exam_windows")
       .select("*")
       .eq("semester", 1)
-      .single();
+      .maybeSingle();
 
     if (!window || !window.is_open) {
-      setOpen(false);
+      setIsOpen(false);
       setLoading(false);
       return;
     }
 
-    setOpen(true);
+    setIsOpen(true);
 
+    /* ---------- AUTH ---------- */
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
+    if (!user) {
+      setMessage("User not logged in");
+      setLoading(false);
+      return;
+    }
+
+    /* ---------- STUDENT ---------- */
     const { data: student } = await supabase
       .from("students")
       .select("id")
       .eq("user_id", user.id)
       .single();
 
+    if (!student) {
+      setMessage("Student profile not found");
+      setLoading(false);
+      return;
+    }
+
+    /* ---------- SUBJECTS ---------- */
     const { data: studentSubjects } = await supabase
       .from("student_subjects")
       .select("subject_id, subjects(name)")
       .eq("student_id", student.id);
 
+    /* ---------- REGISTERED EXAMS ---------- */
     const { data: regs } = await supabase
       .from("exam_registrations")
       .select("subject_id")
@@ -54,6 +73,7 @@ export default function ExamRegistration() {
     setLoading(false);
   };
 
+  /* ---------- REGISTER ---------- */
   const registerExam = async (subjectId) => {
     const {
       data: { user },
@@ -65,6 +85,8 @@ export default function ExamRegistration() {
       .eq("user_id", user.id)
       .single();
 
+    if (!student) return;
+
     await supabase.from("exam_registrations").insert({
       student_id: student.id,
       subject_id: subjectId,
@@ -74,42 +96,81 @@ export default function ExamRegistration() {
     loadData();
   };
 
-  if (loading) return <p className="p-6">Loading...</p>;
-
-  if (!open)
+  /* ---------- UI STATES ---------- */
+  if (loading) {
     return (
-      <div className="p-6 bg-yellow-50 border rounded">
-        Exam registration is currently closed
+      <p className="p-6 text-gray-500">
+        Loading exam registration...
+      </p>
+    );
+  }
+
+  if (!isOpen) {
+    return (
+      <div className="p-6 bg-yellow-50 border border-yellow-300 rounded">
+        <h2 className="font-semibold text-lg mb-1">
+          Exam Registration Closed
+        </h2>
+        <p className="text-sm text-gray-700">
+          Exam registration is currently closed. Please check notices for updates.
+        </p>
       </div>
     );
+  }
+
+  if (message) {
+    return (
+      <div className="p-6 bg-red-50 border border-red-300 rounded">
+        {message}
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-xl bg-white p-6 rounded shadow">
-      <h2 className="text-xl font-semibold mb-4">
-        Exam Registration
-      </h2>
+    <div className="p-6 max-w-2xl mx-auto">
+      <div className="bg-white p-6 rounded shadow space-y-4">
+        <h2 className="text-2xl font-semibold">
+          Exam Registration
+        </h2>
 
-      {subjects.map((s) => (
-        <div
-          key={s.subject_id}
-          className="flex justify-between items-center border p-2 mb-2 rounded"
-        >
-          <span>{s.subjects.name}</span>
+        <p className="text-sm text-gray-600">
+          Select subjects you want to appear for in this semester.
+        </p>
 
-          {registered.includes(s.subject_id) ? (
-            <span className="text-green-600 font-medium">
-              Registered
-            </span>
-          ) : (
-            <button
-              onClick={() => registerExam(s.subject_id)}
-              className="bg-emerald-600 text-white px-3 py-1 rounded"
-            >
-              Register
-            </button>
-          )}
-        </div>
-      ))}
+        {subjects.length === 0 ? (
+          <p className="text-gray-500">
+            No subjects available.
+          </p>
+        ) : (
+          <div className="space-y-3">
+            {subjects.map((s) => (
+              <div
+                key={s.subject_id}
+                className="flex justify-between items-center border p-3 rounded"
+              >
+                <span className="font-medium">
+                  {s.subjects.name}
+                </span>
+
+                {registered.includes(s.subject_id) ? (
+                  <span className="text-green-600 font-medium">
+                    ✔ Registered
+                  </span>
+                ) : (
+                  <button
+                    onClick={() =>
+                      registerExam(s.subject_id)
+                    }
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 rounded text-sm"
+                  >
+                    Register
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -11,6 +11,7 @@ import {
   BarChart,
   Clipboard,
 } from "lucide-react";
+import { HiChartBar } from "react-icons/hi2";
 import supabase from "../../supabaseClient";
 
 export default function FacultyLayout() {
@@ -23,7 +24,7 @@ export default function FacultyLayout() {
 
   return (
     <div className="min-h-screen flex bg-gray-100">
-      {/* SIDEBAR */}
+      {/* ===== SIDEBAR ===== */}
       <aside className="w-64 bg-white shadow">
         <div className="p-6 font-bold text-xl text-emerald-600">
           👨‍🏫 Faculty
@@ -57,30 +58,35 @@ export default function FacultyLayout() {
             Attendance Analytics
           </SidebarLink>
 
-          {/* ✅ NEW LEAVE LINK */}
+          <SidebarLink
+            to="marks-analytics"
+            icon={<HiChartBar size={18} />}
+          >
+            Marks Analytics
+          </SidebarLink>
+
           <SidebarLink to="leave" icon={<Clipboard size={18} />}>
             Leave Requests
           </SidebarLink>
-          <SidebarLink to="marks-analytics">
-  Marks Analytics
-</SidebarLink>
+
           <SidebarLink to="notices" icon={<Bell size={18} />}>
             Notices
           </SidebarLink>
-<SidebarLink to="announcements" icon={<Bell size={18} />}>
-  Announcements
-</SidebarLink>
+
+          <SidebarLink to="announcements" icon={<Bell size={18} />}>
+            Announcements
+          </SidebarLink>
 
           <button
             onClick={logout}
-            className="flex gap-3 px-4 py-2 mt-6 text-red-600"
+            className="flex gap-3 px-4 py-2 mt-6 text-red-600 hover:bg-red-50 rounded"
           >
             <LogOut size={18} /> Logout
           </button>
         </nav>
       </aside>
 
-      {/* CONTENT */}
+      {/* ===== CONTENT ===== */}
       <div className="flex-1 flex flex-col">
         <header className="h-16 bg-white shadow flex justify-between items-center px-6">
           <h2 className="font-semibold">Faculty Portal</h2>
@@ -101,18 +107,21 @@ export default function FacultyLayout() {
   );
 }
 
+/* ===== SIDEBAR LINK COMPONENT ===== */
 function SidebarLink({ to, icon, children }) {
   return (
     <NavLink
       to={to}
       className={({ isActive }) =>
-        `flex gap-3 px-4 py-2 rounded ${
-          isActive ? "bg-emerald-600 text-white" : "hover:bg-gray-100"
+        `flex items-center gap-3 px-4 py-2 rounded transition ${
+          isActive
+            ? "bg-emerald-600 text-white"
+            : "text-gray-700 hover:bg-gray-100"
         }`
       }
     >
       {icon}
-      {children}
+      <span>{children}</span>
     </NavLink>
   );
 }

@@ -8,6 +8,7 @@ import {
   Tooltip,
   ResponsiveContainer,
   CartesianGrid,
+  Cell,
 } from "recharts";
 
 export default function FacultyAttendanceAnalytics() {
@@ -21,14 +22,8 @@ export default function FacultyAttendanceAnalytics() {
   const loadAnalytics = async () => {
     setLoading(true);
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      setLoading(false);
-      return;
-    }
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
 
     const { data: faculty } = await supabase
       .from("faculty")
@@ -36,19 +31,11 @@ export default function FacultyAttendanceAnalytics() {
       .eq("user_id", user.id)
       .single();
 
-    if (!faculty) {
-      setLoading(false);
-      return;
-    }
+    if (!faculty) return;
 
     const { data: facultySubjects } = await supabase
       .from("faculty_subjects")
-      .select(
-        `
-        subject_id,
-        subjects ( id, name )
-      `
-      )
+      .select(`subject_id, subjects(id, name)`)
       .eq("faculty_id", faculty.id);
 
     const result = [];
@@ -57,94 +44,85 @@ export default function FacultyAttendanceAnalytics() {
       const subjectId = fs.subjects.id;
       const subjectName = fs.subjects.name;
 
-      const { count: totalClasses } = await supabase
+      const { count: total } = await supabase
         .from("attendance")
         .select("*", { count: "exact", head: true })
         .eq("subject_id", subjectId);
 
-      if (!totalClasses) {
-        result.push({
-          subject: subjectName,
-          percent: 0,
-        });
+      if (!total) {
+        result.push({ subject: subjectName, percent: 0 });
         continue;
       }
 
-      const { count: presentCount } = await supabase
+      const { count: present } = await supabase
         .from("attendance")
         .select("*", { count: "exact", head: true })
         .eq("subject_id", subjectId)
         .eq("status", true);
 
-      const percent = Math.round(
-        (presentCount / totalClasses) * 100
-      );
-
-      result.push({
-        subject: subjectName,
-        percent,
-      });
+      const percent = Math.round((present / total) * 100);
+      result.push({ subject: subjectName, percent });
     }
 
     setSummary(result);
     setLoading(false);
   };
 
-  if (loading) return <p className="p-6">Loading analytics...</p>;
+  const getStatus = (percent) => {
+    if (percent < 65)
+      return { label: "Critical", color: "text-red-600", bg: "bg-red-100" };
+    if (percent < 75)
+      return { label: "Warning", color: "text-orange-600", bg: "bg-orange-100" };
+    return { label: "Good", color: "text-green-600", bg: "bg-green-100" };
+  };
+
+  if (loading) {
+    return <p className="p-6">Loading attendance analytics...</p>;
+  }
 
   return (
-    <div className="space-y-8">
-      {/* ===== SUMMARY TABLE ===== */}
-      <div className="max-w-3xl bg-white p-6 rounded shadow">
-        <h2 className="text-xl font-semibold mb-4">
+    <div className="p-6 space-y-8 max-w-6xl">
+      {/* HEADER */}
+      <div>
+        <h1 className="text-2xl font-semibold">Attendance Analytics</h1>
+        <p className="text-sm text-gray-500">
+          Subject-wise attendance performance overview
+        </p>
+      </div>
+
+      {/* SUMMARY TABLE */}
+      <div className="bg-white rounded-lg shadow border p-6">
+        <h2 className="text-lg font-medium mb-4">
           Attendance Summary
         </h2>
 
         {summary.length === 0 ? (
-          <p className="text-gray-500">
-            No attendance data available
-          </p>
+          <p className="text-gray-500">No attendance data available</p>
         ) : (
-          <table className="w-full border text-sm">
+          <table className="w-full text-sm border">
             <thead className="bg-gray-100">
               <tr>
-                <th className="border p-2 text-left">
-                  Subject
-                </th>
-                <th className="border p-2 text-center">
-                  Attendance %
-                </th>
-                <th className="border p-2 text-center">
-                  Status
-                </th>
+                <th className="border px-3 py-2 text-left">Subject</th>
+                <th className="border px-3 py-2 text-center">Attendance %</th>
+                <th className="border px-3 py-2 text-center">Status</th>
               </tr>
             </thead>
 
             <tbody>
               {summary.map((s, i) => {
-                let status = "Good";
-                let color = "text-green-600";
-
-                if (s.percent < 65) {
-                  status = "Critical";
-                  color = "text-red-600";
-                } else if (s.percent < 75) {
-                  status = "Warning";
-                  color = "text-orange-600";
-                }
-
+                const status = getStatus(s.percent);
                 return (
-                  <tr key={i}>
-                    <td className="border p-2">
-                      {s.subject}
-                    </td>
-                    <td className="border p-2 text-center">
+                  <tr key={i} className="hover:bg-gray-50">
+                    <td className="border px-3 py-2">{s.subject}</td>
+                    <td className="border px-3 py-2 text-center font-medium">
                       {s.percent}%
                     </td>
-                    <td
-                      className={`border p-2 text-center font-medium ${color}`}
-                    >
-                      {status}
+                    <td className="border px-3 py-2 text-center">
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium ${status.bg} ${status.color}`}
+                      >
+                        {status.label}
+                      </span>
                     </td>
                   </tr>
                 );
@@ -154,10 +132,10 @@ export default function FacultyAttendanceAnalytics() {
         )}
       </div>
 
-      {/* ===== BAR CHART ===== */}
+      {/* BAR CHART */}
       {summary.length > 0 && (
-        <div className="bg-white p-6 rounded shadow">
-          <h2 className="text-xl font-semibold mb-4">
+        <div className="bg-white rounded-lg shadow border p-6">
+          <h2 className="text-lg font-medium mb-4">
             Attendance Percentage by Subject
           </h2>
 
@@ -167,11 +145,21 @@ export default function FacultyAttendanceAnalytics() {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="subject" />
                 <YAxis domain={[0, 100]} />
-                <Tooltip />
-                <Bar
-                  dataKey="percent"
-                  radius={[6, 6, 0, 0]}
-                />
+                <Tooltip formatter={(v) => `${v}%`} />
+                <Bar dataKey="percent" radius={[8, 8, 0, 0]}>
+                  {summary.map((entry, index) => (
+                    <Cell
+                      key={index}
+                      fill={
+                        entry.percent < 65
+                          ? "#dc2626"
+                          : entry.percent < 75
+                          ? "#f97316"
+                          : "#16a34a"
+                      }
+                    />
+                  ))}
+                </Bar>
               </BarChart>
             </ResponsiveContainer>
           </div>

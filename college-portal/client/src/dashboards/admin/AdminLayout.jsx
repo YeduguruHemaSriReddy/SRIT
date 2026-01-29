@@ -3,10 +3,15 @@ import {
   LayoutDashboard,
   Users,
   BookOpen,
+  BookOpenCheck,
   Bell,
-  LogOut,
+  ClipboardList,
+  FileCheck2,
+  IndianRupee,
   Calendar,
+  LogOut,
 } from "lucide-react";
+import { MessageSquareWarning } from "lucide-react";
 import supabase from "../../supabaseClient";
 
 export default function AdminLayout() {
@@ -25,7 +30,7 @@ export default function AdminLayout() {
           🛠️ Admin
         </div>
 
-        <nav className="px-4 space-y-2">
+        <nav className="px-4 space-y-1">
           <SideLink
             to="/admin/dashboard"
             icon={<LayoutDashboard size={18} />}
@@ -46,34 +51,62 @@ export default function AdminLayout() {
           >
             Notices
           </SideLink>
-<SideLink
-  to="/admin/faculty-subject"
-  icon={<BookOpen size={18} />}
->
-  Faculty–Subject
-</SideLink>
+
+          <SideLink
+            to="/admin/faculty-subject"
+            icon={<BookOpen size={18} />}
+          >
+            Faculty–Subject
+          </SideLink>
 
           <SideLink
             to="/admin/student-assign"
-            icon={<BookOpen size={18} />}
+            icon={<BookOpenCheck size={18} />}
           >
             Student–Subject Mapping
           </SideLink>
-          <SideLink to="faculty-leaves">Faculty Leaves</SideLink>
-          <SideLink to="exam-control">
-  Exam Control
+
+          <SideLink
+            to="/admin/faculty-leaves"
+            icon={<ClipboardList size={18} />}
+          >
+            Faculty Leaves
+          </SideLink>
+
+          <SideLink
+            to="/admin/exam-control"
+            icon={<FileCheck2 size={18} />}
+          >
+            Exam Control
+          </SideLink>
+
+          <SideLink
+            to="/admin/fee-management"
+            icon={<IndianRupee size={18} />}
+          >
+            Fee Management
+          </SideLink>
+<SideLink
+  to="/admin/grievances"
+  icon={<MessageSquareWarning size={18} />}
+>
+  Grievances
 </SideLink>
-<SideLink to="fee-management">
-  Fee Management
-</SideLink>
-          <SideLink to="/admin/timetable" icon={<Calendar />}>
-  Timetable
-</SideLink>
+
+          <SideLink
+            to="/admin/timetable"
+            icon={<Calendar size={18} />}
+          >
+            Timetable
+          </SideLink>
+
+          {/* LOGOUT */}
           <button
             onClick={logout}
-            className="flex gap-3 px-4 py-2 mt-6 text-red-600 hover:bg-red-50 w-full rounded"
+            className="flex gap-3 px-4 py-2 mt-6 text-red-600 hover:bg-red-50 w-full rounded transition"
           >
-            <LogOut size={18} /> Logout
+            <LogOut size={18} />
+            Logout
           </button>
         </nav>
       </aside>
@@ -96,21 +129,23 @@ export default function AdminLayout() {
   );
 }
 
-/* ---------- SIDEBAR LINK ---------- */
+/* ================= SIDEBAR LINK ================= */
 function SideLink({ to, icon, children }) {
   return (
     <NavLink
       to={to}
       className={({ isActive }) =>
-        `flex gap-3 px-4 py-2 rounded transition ${
+        `flex items-center gap-3 px-4 py-2 rounded transition ${
           isActive
             ? "bg-purple-600 text-white"
-            : "hover:bg-gray-100 text-gray-700"
+            : "text-gray-700 hover:bg-gray-100"
         }`
       }
     >
       {icon}
-      {children}
+      <span className="text-sm font-medium">
+        {children}
+      </span>
     </NavLink>
   );
 }

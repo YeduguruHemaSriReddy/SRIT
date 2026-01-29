@@ -13,11 +13,9 @@ export default function FacultyMaterials() {
     fetchSubjects();
   }, []);
 
-  // 🔹 Load faculty subjects
+  /* ---------- FETCH SUBJECTS ---------- */
   const fetchSubjects = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
 
     const { data: faculty } = await supabase
       .from("faculty")
@@ -33,7 +31,7 @@ export default function FacultyMaterials() {
     setSubjects(data || []);
   };
 
-  // 🔹 Load materials
+  /* ---------- FETCH MATERIALS ---------- */
   const fetchMaterials = async (subjectId) => {
     setSelectedSubject(subjectId);
 
@@ -46,19 +44,19 @@ export default function FacultyMaterials() {
     setMaterials(data || []);
   };
 
-  // 🔹 Detect file type (IMPORTANT)
+  /* ---------- FILE TYPE ---------- */
   const detectFileType = (file) => {
-    if (file.type.includes("pdf")) return "pdf";
-    if (file.type.includes("image")) return "image";
-    if (file.type.includes("video")) return "video";
-    if (file.type.includes("audio")) return "audio";
-    return "other";
+    if (file.type.includes("pdf")) return "PDF";
+    if (file.type.includes("image")) return "Image";
+    if (file.type.includes("video")) return "Video";
+    if (file.type.includes("audio")) return "Audio";
+    return "File";
   };
 
-  // 🔹 Upload material
+  /* ---------- UPLOAD ---------- */
   const uploadMaterial = async () => {
     if (!title || !file || !selectedSubject) {
-      alert("Fill all fields");
+      alert("Please fill all fields");
       return;
     }
 
@@ -67,25 +65,21 @@ export default function FacultyMaterials() {
     const fileType = detectFileType(file);
     const filePath = `${selectedSubject}/${Date.now()}-${file.name}`;
 
-    // Upload to storage (ANY FILE TYPE)
-    const { error: uploadError } = await supabase.storage
+    const { error } = await supabase.storage
       .from("materials")
       .upload(filePath, file);
 
-    if (uploadError) {
+    if (error) {
       alert("Upload failed");
       setLoading(false);
       return;
     }
 
-    // Get public URL
-    const { data: publicUrl } = supabase.storage
+    const { data: url } = supabase.storage
       .from("materials")
       .getPublicUrl(filePath);
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
 
     const { data: faculty } = await supabase
       .from("faculty")
@@ -93,13 +87,12 @@ export default function FacultyMaterials() {
       .eq("user_id", user.id)
       .single();
 
-    // Save metadata to DB
     await supabase.from("materials").insert({
       title,
       subject_id: selectedSubject,
       uploaded_by: faculty.id,
-      file_url: publicUrl.publicUrl,
-      file_type: fileType, // ✅ KEY LINE
+      file_url: url.publicUrl,
+      file_type: fileType,
     });
 
     setTitle("");
@@ -109,77 +102,116 @@ export default function FacultyMaterials() {
   };
 
   return (
-    <div className="p-6">
-      <h1 className="text-xl font-semibold mb-4">
-        Study Materials
-      </h1>
+    <div className="p-6 max-w-5xl space-y-6">
+      {/* HEADER */}
+      <div>
+        <h1 className="text-2xl font-semibold">Study Materials</h1>
+        <p className="text-sm text-gray-500">
+          Upload and manage learning resources for your subjects
+        </p>
+      </div>
 
       {/* SUBJECT SELECT */}
-      <select
-        className="border p-2 mb-4 w-full"
-        onChange={(e) => fetchMaterials(e.target.value)}
-      >
-        <option value="">Select Subject</option>
-        {subjects.map((s) => (
-          <option key={s.subject_id} value={s.subject_id}>
-            {s.subjects.name}
-          </option>
-        ))}
-      </select>
+      <div className="bg-white p-5 rounded-lg shadow border">
+        <label className="block text-sm font-medium mb-2">
+          Select Subject
+        </label>
+        <select
+          className="border rounded px-3 py-2 w-full"
+          onChange={(e) => fetchMaterials(e.target.value)}
+        >
+          <option value="">-- Choose Subject --</option>
+          {subjects.map((s) => (
+            <option key={s.subject_id} value={s.subject_id}>
+              {s.subjects.name}
+            </option>
+          ))}
+        </select>
+      </div>
 
-      {/* UPLOAD FORM */}
+      {/* UPLOAD CARD */}
       {selectedSubject && (
-        <div className="mb-6">
+        <div className="bg-white p-5 rounded-lg shadow border space-y-4">
+          <h2 className="font-semibold text-lg">
+            Upload New Material
+          </h2>
+
           <input
             type="text"
-            placeholder="Material title"
+            placeholder="Material title (Unit name / Topic)"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="border p-2 w-full mb-2"
+            className="border rounded px-3 py-2 w-full"
           />
 
           <input
             type="file"
-            accept="*/*"   // ✅ ACCEPT ANY FILE
+            accept="*/*"
             onChange={(e) => setFile(e.target.files[0])}
-            className="mb-2"
+            className="w-full"
           />
 
           <button
             onClick={uploadMaterial}
             disabled={loading}
-            className="bg-green-600 text-white px-4 py-2 rounded"
+            className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded"
           >
-            {loading ? "Uploading..." : "Upload"}
+            {loading ? "Uploading..." : "Upload Material"}
           </button>
         </div>
       )}
 
       {/* MATERIAL LIST */}
-      <ul className="space-y-2">
-        {materials.map((m) => (
-          <li
-            key={m.id}
-            className="p-3 bg-gray-50 rounded flex justify-between"
-          >
-            <span>
-              {m.title}{" "}
-              <span className="text-xs text-gray-500">
-                ({m.file_type || "file"})
-              </span>
-            </span>
+      {selectedSubject && (
+        <div className="bg-white p-5 rounded-lg shadow border">
+          <h2 className="font-semibold text-lg mb-4">
+            Uploaded Materials
+          </h2>
 
-            <a
-              href={m.file_url}
-              target="_blank"
-              rel="noreferrer"
-              className="text-blue-600"
-            >
-              Download
-            </a>
-          </li>
-        ))}
-      </ul>
+          {materials.length === 0 ? (
+            <p className="text-gray-500">
+              No materials uploaded yet.
+            </p>
+          ) : (
+            <table className="w-full text-sm border">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="text-left p-2 border">Title</th>
+                  <th className="text-left p-2 border">Type</th>
+                  <th className="text-left p-2 border">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {materials.map((m) => (
+                  <tr
+                    key={m.id}
+                    className="hover:bg-gray-50"
+                  >
+                    <td className="p-2 border font-medium">
+                      {m.title}
+                    </td>
+                    <td className="p-2 border">
+                      <span className="px-2 py-1 text-xs rounded bg-indigo-100 text-indigo-700">
+                        {m.file_type}
+                      </span>
+                    </td>
+                    <td className="p-2 border">
+                      <a
+                        href={m.file_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-indigo-600 hover:underline"
+                      >
+                        Download
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      )}
     </div>
   );
 }

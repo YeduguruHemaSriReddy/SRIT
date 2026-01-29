@@ -35,6 +35,7 @@ import StudentGrievances from "./dashboards/student/StudentGrievances";
 import StudentFees from "./dashboards/student/StudentFees";
 import ExamRegistration from "./dashboards/student/ExamRegistration";
 import StudentIDCard from "./dashboards/student/StudentIdCard";
+import StudentCertifications from "./dashboards/student/StudentCertifications";
 /* ---------- FACULTY ---------- */
 import FacultyLayout from "./dashboards/faculty/FacultyLayout";
 import FacultyDashboard from "./dashboards/faculty/FacultyDashboard";
@@ -121,6 +122,7 @@ export default function App() {
               <Route path="exam-registration" element={<ExamRegistration />} />
               <Route path="profile" element={<StudentProfile />} />
               <Route path="id-card" element={<StudentIDCard />} /> 
+              <Route path="certifications" element={<StudentCertifications />} />
             </Route>
 
             {/* ===== FACULTY ===== */}

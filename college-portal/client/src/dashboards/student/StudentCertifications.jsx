@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import supabase from "../../supabaseClient";
 import { Upload, Link2, Trash2 } from "lucide-react";
 
-export default function FacultyCertifications() {
+export default function StudentCertifications() {
   const [certifications, setCertifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -27,14 +27,13 @@ export default function FacultyCertifications() {
 
   const platforms = [
     "NPTEL",
-    "SWAYAM",
     "Coursera",
     "edX",
     "Udemy",
-    "AICTE FDP",
-    "IIT FDP",
+    "Internship",
+    "Hackathon",
+    "Workshop",
     "Industry Training",
-    "Workshop / Seminar",
     "Other",
   ];
 
@@ -48,17 +47,19 @@ export default function FacultyCertifications() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    const { data: faculty } = await supabase
-      .from("faculty")
+    const { data: student } = await supabase
+      .from("students")
       .select("id")
       .eq("user_id", user.id)
       .single();
 
+    if (!student) return;
+
     const { data } = await supabase
-      .from("faculty_certifications")
+      .from("student_certifications")
       .select("*")
-      .eq("faculty_id", faculty.id)
-      .order("year", { ascending: false });
+      .eq("student_id", student.id)
+      .order("created_at", { ascending: false });
 
     setCertifications(data || []);
     setLoading(false);
@@ -71,15 +72,15 @@ export default function FacultyCertifications() {
     }
 
     if (!form.driveLink && !form.file) {
-      alert("Please provide Drive link or upload certificate file");
+      alert("Provide Drive link or upload certificate");
       return;
     }
 
     setSaving(true);
 
     const { data: { user } } = await supabase.auth.getUser();
-    const { data: faculty } = await supabase
-      .from("faculty")
+    const { data: student } = await supabase
+      .from("students")
       .select("id")
       .eq("user_id", user.id)
       .single();
@@ -88,7 +89,7 @@ export default function FacultyCertifications() {
 
     /* ===== FILE UPLOAD ===== */
     if (form.file) {
-      const fileName = `${faculty.id}/${Date.now()}_${form.file.name}`;
+      const fileName = `${student.id}/${Date.now()}_${form.file.name}`;
 
       const { error: uploadError } = await supabase.storage
         .from("certificates")
@@ -107,9 +108,9 @@ export default function FacultyCertifications() {
       fileUrl = data.publicUrl;
     }
 
-    await supabase.from("faculty_certifications").insert([
+    await supabase.from("student_certifications").insert([
       {
-        faculty_id: faculty.id,
+        student_id: student.id,
         title: form.title,
         platform: form.platform,
         year: form.year,
@@ -134,7 +135,7 @@ export default function FacultyCertifications() {
     if (!window.confirm("Delete this certification?")) return;
 
     await supabase
-      .from("faculty_certifications")
+      .from("student_certifications")
       .delete()
       .eq("id", id);
 
@@ -150,22 +151,22 @@ export default function FacultyCertifications() {
       {/* HEADER */}
       <div className="mb-6">
         <h1 className="text-2xl font-semibold">
-          Certifications & Courses
+          My Certifications
         </h1>
         <p className="text-sm text-gray-500">
-          FDPs, MOOCs, Workshops with proof for verification
+          MOOCs, Internships, Hackathons with proof
         </p>
       </div>
 
       {/* ADD FORM */}
       <div className="bg-white rounded-lg shadow border p-6 mb-6">
         <h2 className="font-medium mb-4">
-          Add New Certification
+          Add Certification
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <input
-            placeholder="Course / FDP Title"
+            placeholder="Course / Internship Title"
             value={form.title}
             onChange={(e) =>
               setForm({ ...form, title: e.target.value })
@@ -204,7 +205,7 @@ export default function FacultyCertifications() {
           </select>
         </div>
 
-        {/* PROOF SECTION */}
+        {/* PROOF */}
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="relative">
             <Link2 className="absolute left-3 top-3 text-gray-400" size={18} />
@@ -237,7 +238,7 @@ export default function FacultyCertifications() {
         <button
           onClick={addCertification}
           disabled={saving}
-          className="mt-5 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded"
+          className="mt-5 bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded"
         >
           {saving ? "Saving..." : "Add Certification"}
         </button>
@@ -246,7 +247,7 @@ export default function FacultyCertifications() {
       {/* LIST */}
       <div className="bg-white rounded-lg shadow border p-6">
         <h2 className="font-medium mb-4">
-          My Certifications
+          Uploaded Certifications
         </h2>
 
         {certifications.length === 0 ? (
@@ -274,7 +275,7 @@ export default function FacultyCertifications() {
                         rel="noreferrer"
                         className="text-indigo-600 hover:underline"
                       >
-                        View Drive Link
+                        Drive Link
                       </a>
                     )}
                     {c.file_url && (
@@ -284,7 +285,7 @@ export default function FacultyCertifications() {
                         rel="noreferrer"
                         className="text-green-600 hover:underline"
                       >
-                        View Uploaded File
+                        Uploaded File
                       </a>
                     )}
                   </div>

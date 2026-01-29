@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import supabase from "../../supabaseClient";
+import { UserPlus } from "lucide-react";
 
 export default function StudentAssign() {
   const [students, setStudents] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [studentId, setStudentId] = useState("");
   const [subjectId, setSubjectId] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     fetchStudents();
@@ -32,65 +34,87 @@ export default function StudentAssign() {
 
   const assignStudent = async () => {
     if (!studentId || !subjectId) {
-      alert("Select both student and subject");
+      alert("Please select both student and subject");
       return;
     }
 
-    const { error } = await supabase
-      .from("student_subjects")
-      .insert({
-        student_id: studentId,
-        subject_id: subjectId,
-      });
+    setLoading(true);
+
+    const { error } = await supabase.from("student_subjects").insert({
+      student_id: studentId,
+      subject_id: subjectId,
+    });
+
+    setLoading(false);
 
     if (error) {
-      alert("Assignment failed (maybe already assigned)");
-      console.error(error);
+      alert("Assignment failed (student may already be assigned)");
     } else {
-      alert("Student assigned successfully");
       setStudentId("");
       setSubjectId("");
+      alert("Student assigned successfully");
     }
   };
 
   return (
-    <div className="p-6 max-w-xl">
-      <h1 className="text-xl font-semibold mb-4">
-        Assign Student to Subject
-      </h1>
+    <div className="space-y-8 max-w-4xl">
+      {/* ===== HEADER ===== */}
+      <div>
+        <h1 className="text-2xl font-semibold">
+          Student – Subject Mapping
+        </h1>
+        <p className="text-sm text-gray-500">
+          Assign students to subjects for attendance and marks tracking
+        </p>
+      </div>
 
-      <select
-        className="w-full border p-2 mb-3"
-        value={studentId}
-        onChange={(e) => setStudentId(e.target.value)}
-      >
-        <option value="">Select Student</option>
-        {students.map((s) => (
-          <option key={s.id} value={s.id}>
-            {s.roll_number}
-          </option>
-        ))}
-      </select>
+      {/* ===== ASSIGNMENT CARD ===== */}
+      <div className="bg-white rounded-lg shadow border p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <UserPlus className="text-green-600" size={20} />
+          <h2 className="text-lg font-medium">
+            Assign Student to Subject
+          </h2>
+        </div>
 
-      <select
-        className="w-full border p-2 mb-3"
-        value={subjectId}
-        onChange={(e) => setSubjectId(e.target.value)}
-      >
-        <option value="">Select Subject</option>
-        {subjects.map((s) => (
-          <option key={s.id} value={s.id}>
-            {s.name}
-          </option>
-        ))}
-      </select>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <select
+            value={studentId}
+            onChange={(e) => setStudentId(e.target.value)}
+            className="border px-3 py-2 rounded"
+          >
+            <option value="">Select Student</option>
+            {students.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.roll_number}
+              </option>
+            ))}
+          </select>
 
-      <button
-        onClick={assignStudent}
-        className="bg-green-600 text-white px-4 py-2 rounded"
-      >
-        Assign
-      </button>
+          <select
+            value={subjectId}
+            onChange={(e) => setSubjectId(e.target.value)}
+            className="border px-3 py-2 rounded"
+          >
+            <option value="">Select Subject</option>
+            {subjects.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="mt-6">
+          <button
+            onClick={assignStudent}
+            disabled={loading}
+            className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
+          >
+            {loading ? "Assigning..." : "Assign Student"}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
