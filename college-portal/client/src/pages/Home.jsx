@@ -24,7 +24,6 @@ import {
 } from "../components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 
-/* ---------- IMAGES ---------- */
 import heroImg from "../assets/campus/hero.jpg";
 import labImg from "../assets/campus/lab.jpg";
 import libraryImg from "../assets/campus/library.jpg";
@@ -32,7 +31,6 @@ import eventImg from "../assets/campus/event.jpg";
 import hostelImg from "../assets/campus/hostel.jpg";
 import groundImg from "../assets/campus/ground.jpg";
 
-/* ---------- STATIC DATA ---------- */
 const departments = [
   { code: "CSE", name: "Computer Science & Engineering" },
   { code: "ECE", name: "Electronics & Communication" },
@@ -52,44 +50,43 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="bg-white">
+    <div className="bg-blue-50">
 
-      {/* ================= HERO WITH IMAGE ================= */}
+      {/* HERO */}
       <section className="relative h-[95vh] flex items-center justify-center overflow-hidden">
-        <img
-          src={heroImg}
-          alt="SRIT Campus"
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
+        <img src={heroImg} className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-blue-500/40" />
 
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          className="relative z-10 text-center text-white px-6 max-w-5xl"
+          className="relative z-10 text-center px-6 max-w-5xl"
         >
-          <span className="inline-block bg-orange-500 px-6 py-2 rounded-full text-sm font-bold mb-6">
+          <span className="inline-block bg-blue-100 px-6 py-2 rounded-full text-sm font-bold mb-6 text-blue-600">
             Empowering Innovation Since 2008
           </span>
 
-          <h1 className="text-5xl md:text-7xl font-extrabold leading-tight mb-6">
+          <h1 className="text-5xl md:text-7xl font-extrabold mb-6 text-blue-600">
             Srinivasa Ramanujan <br />
-            <span className="text-orange-400">Institute of Technology</span>
+            <span className="text-orange-500">Institute of Technology</span>
           </h1>
 
-          <p className="text-xl md:text-2xl text-white/90 mb-10">
+          <p className="text-xl md:text-2xl mb-10 text-black">
             Excellence in Education • Innovation • Future Leaders
           </p>
 
-          <div className="flex flex-wrap justify-center gap-6">
+          <div className="flex justify-center gap-6">
             <Link to="/admissions">
-              <Button size="lg" className="bg-orange-500 hover:bg-orange-600">
+              <Button className="bg-blue-600 hover:bg-cyan-500 text-white">
                 Admissions Open <ArrowRight className="ml-2" />
               </Button>
             </Link>
 
             <Link to="/login">
-              <Button size="lg" variant="outline" className="border-white text-white">
+              <Button
+                variant="outline"
+                className="border-blue-600 text-blue-600 hover:bg-cyan-500 hover:text-white"
+              >
                 Login to Dashboard
               </Button>
             </Link>
@@ -97,7 +94,7 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* ================= QUICK HIGHLIGHTS ================= */}
+      {/* QUICK HIGHLIGHTS */}
       <section className="-mt-20 relative z-20">
         <div className="container mx-auto px-6 grid md:grid-cols-4 gap-6">
           {[
@@ -108,69 +105,45 @@ export default function Home() {
           ].map((item) => (
             <div
               key={item.title}
-              className="bg-white rounded-2xl shadow-xl p-8 text-center hover:-translate-y-1 transition"
+              className="bg-blue-100 rounded-2xl p-8 text-center shadow
+                         hover:bg-cyan-500 hover:text-white
+                         transition-all duration-300"
             >
-              <item.icon className="w-10 h-10 text-orange-500 mx-auto mb-4" />
+              <item.icon className="w-10 h-10 mx-auto mb-4 text-blue-600" />
               <h3 className="font-bold text-lg">{item.title}</h3>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ================= DASHBOARD PORTALS ================= */}
-      <section className="py-28 bg-gray-100">
+      {/* PORTALS */}
+      <section className="py-28 bg-blue-100">
         <div className="container mx-auto px-6">
-          <SectionHeader title="Login Portals" subtitle="Dashboards" centered />
+          <SectionHeader
+            title="Login Portals"
+            subtitle="Dashboards"
+            titleColor="text-blue-600"
+            subtitleColor="text-orange-500"
+            centered
+          />
 
           <div className="grid md:grid-cols-3 gap-8 mt-16">
-            <PortalCard title="Student Portal" link="/login" color="from-blue-600 to-purple-600" />
-            <PortalCard title="Faculty Portal" link="/login" color="from-emerald-600 to-teal-500" />
-            <PortalCard title="Admin Portal" link="/login" color="from-orange-600 to-red-500" />
+            <PortalCard title="Student Portal" />
+            <PortalCard title="Faculty Portal" />
+            <PortalCard title="Admin Portal" />
           </div>
         </div>
       </section>
 
-      {/* ================= CAMPUS GALLERY ================= */}
-      <section className="py-28 bg-white">
+      {/* EVENTS */}
+      <section className="py-28 bg-blue-50">
         <div className="container mx-auto px-6">
-          <SectionHeader title="Campus Life" subtitle="Inside SRIT" centered />
-
-          <div className="grid md:grid-cols-3 gap-6 mt-14">
-            {[labImg, libraryImg, eventImg, hostelImg, groundImg, heroImg].map(
-              (img, i) => (
-                <div key={i} className="overflow-hidden rounded-2xl shadow-lg group">
-                  <img
-                    src={img}
-                    alt="Campus"
-                    className="w-full h-64 object-cover group-hover:scale-110 transition duration-500"
-                  />
-                </div>
-              )
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* ================= DEPARTMENTS ================= */}
-      <section className="py-28 bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
-        <div className="container mx-auto px-6">
-          <SectionHeader title="Departments" subtitle="Academics" centered />
-
-          <div className="grid md:grid-cols-4 gap-8 mt-16">
-            {departments.map((d) => (
-              <div key={d.code} className="bg-white/10 backdrop-blur rounded-xl p-8 text-center">
-                <h3 className="text-3xl font-bold mb-2">{d.code}</h3>
-                <p className="text-white/90">{d.name}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ================= EVENTS ================= */}
-      <section className="py-28 bg-gray-100">
-        <div className="container mx-auto px-6">
-          <SectionHeader title="Events & Notices" subtitle="Campus Updates" />
+          <SectionHeader
+            title="Events & Notices"
+            subtitle="Campus Updates"
+            titleColor="text-blue-600"
+            subtitleColor="text-orange-500"
+          />
 
           <Carousel plugins={[plugin.current]}>
             <CarouselContent>
@@ -189,22 +162,25 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ================= CTA ================= */}
-      <section className="py-28 bg-orange-500 text-white text-center">
-        <h2 className="text-4xl md:text-5xl font-extrabold mb-6">
+      {/* CTA */}
+      <section className="py-28 bg-blue-200 text-center">
+        <h2 className="text-5xl font-extrabold mb-6 text-blue-600">
           Ready to Shape Your Future?
         </h2>
-        <p className="text-xl mb-10">
-          Join SRIT and become a part of excellence.
-        </p>
 
         <div className="flex justify-center gap-6">
-          <Button size="lg" className="bg-white text-orange-600">
+          <Button className="bg-blue-600 hover:bg-cyan-500 text-white">
             Download Brochure <Download className="ml-2" />
           </Button>
-          <Button size="lg" variant="outline" className="border-white text-white">
-            Contact Us
-          </Button>
+
+          <Link to="/contact">
+            <Button
+              variant="outline"
+              className="border-blue-600 text-blue-600 hover:bg-cyan-500 hover:text-white"
+            >
+              Contact Us
+            </Button>
+          </Link>
         </div>
       </section>
 
@@ -213,15 +189,14 @@ export default function Home() {
   );
 }
 
-/* ---------- PORTAL CARD ---------- */
-function PortalCard({ title, link, color }) {
+function PortalCard({ title }) {
   return (
-    <Link to={link}>
-      <div
-        className={`bg-gradient-to-r ${color} text-white p-10 rounded-2xl shadow-xl hover:scale-105 transition`}
-      >
+    <Link to="/login">
+      <div className="bg-blue-600 text-white p-10 rounded-2xl shadow-xl
+                      hover:bg-cyan-500 hover:scale-105
+                      transition-all duration-300">
         <h3 className="text-2xl font-bold mb-4">{title}</h3>
-        <p className="opacity-90">Secure access to dashboard</p>
+        <p>Secure access to dashboard</p>
         <div className="mt-6 font-semibold">Login →</div>
       </div>
     </Link>

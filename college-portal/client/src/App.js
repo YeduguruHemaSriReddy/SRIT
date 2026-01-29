@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 
 import Navigation from "./components/Navigation";
@@ -36,17 +36,9 @@ import AdminGrievances from "./dashboards/admin/AdminGrievances";
 function ProtectedRoute({ children, allowedRole }) {
   const { user, role, loading } = useAuth();
 
-  if (loading) {
-    return <p className="p-6 text-center">Loading...</p>;
-  }
-
-  if (!user) {
-    return <Navigate to="/login" />;
-  }
-
-  if (allowedRole && role !== allowedRole) {
-    return <Navigate to="/" />;
-  }
+  if (loading) return <p className="p-6 text-center">Loading...</p>;
+  if (!user) return <Navigate to="/login" />;
+  if (allowedRole && role !== allowedRole) return <Navigate to="/" />;
 
   return children;
 }
@@ -55,111 +47,108 @@ function ProtectedRoute({ children, allowedRole }) {
 function App() {
   return (
     <AuthProvider>
-      <BrowserRouter>
-        <Navigation />
+      <Navigation />
 
-        {/* 🔥 GLOBAL FIX FOR FIXED NAVBAR */}
-        <div className="pt-44">
-          <Routes>
-            {/* ===== PUBLIC ===== */}
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/admissions" element={<Admissions />} />
-            <Route path="/departments" element={<Departments />} />
-            <Route path="/campus-life" element={<CampusLife />} />
-            <Route path="/placements" element={<Placements />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+      <div className="pt-44">
+        <Routes>
+          {/* ===== PUBLIC ===== */}
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/admissions" element={<Admissions />} />
+          <Route path="/departments" element={<Departments />} />
+          <Route path="/campus-life" element={<CampusLife />} />
+          <Route path="/placements" element={<Placements />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
-            {/* ===== STUDENT ===== */}
-            <Route
-              path="/student"
-              element={
-                <ProtectedRoute allowedRole="student">
-                  <StudentDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/student/notices"
-              element={
-                <ProtectedRoute allowedRole="student">
-                  <StudentNotices />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/student/downloads"
-              element={
-                <ProtectedRoute allowedRole="student">
-                  <StudentDownloads />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/student/grievances"
-              element={
-                <ProtectedRoute allowedRole="student">
-                  <StudentGrievances />
-                </ProtectedRoute>
-              }
-            />
+          {/* ===== STUDENT ===== */}
+          <Route
+            path="/student"
+            element={
+              <ProtectedRoute allowedRole="student">
+                <StudentDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/student/notices"
+            element={
+              <ProtectedRoute allowedRole="student">
+                <StudentNotices />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/student/downloads"
+            element={
+              <ProtectedRoute allowedRole="student">
+                <StudentDownloads />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/student/grievances"
+            element={
+              <ProtectedRoute allowedRole="student">
+                <StudentGrievances />
+              </ProtectedRoute>
+            }
+          />
 
-            {/* ===== FACULTY ===== */}
-            <Route
-              path="/faculty"
-              element={
-                <ProtectedRoute allowedRole="faculty">
-                  <FacultyDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/faculty/notices"
-              element={
-                <ProtectedRoute allowedRole="faculty">
-                  <FacultyNotices />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/faculty/downloads"
-              element={
-                <ProtectedRoute allowedRole="faculty">
-                  <FacultyDownloads />
-                </ProtectedRoute>
-              }
-            />
+          {/* ===== FACULTY ===== */}
+          <Route
+            path="/faculty"
+            element={
+              <ProtectedRoute allowedRole="faculty">
+                <FacultyDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/faculty/notices"
+            element={
+              <ProtectedRoute allowedRole="faculty">
+                <FacultyNotices />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/faculty/downloads"
+            element={
+              <ProtectedRoute allowedRole="faculty">
+                <FacultyDownloads />
+              </ProtectedRoute>
+            }
+          />
 
-            {/* ===== ADMIN ===== */}
-            <Route
-              path="/admin"
-              element={
-                <ProtectedRoute allowedRole="admin">
-                  <AdminDashboard />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/notices"
-              element={
-                <ProtectedRoute allowedRole="admin">
-                  <AdminNotices />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/admin/grievances"
-              element={
-                <ProtectedRoute allowedRole="admin">
-                  <AdminGrievances />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        </div>
-      </BrowserRouter>
+          {/* ===== ADMIN ===== */}
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute allowedRole="admin">
+                <AdminDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/notices"
+            element={
+              <ProtectedRoute allowedRole="admin">
+                <AdminNotices />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/grievances"
+            element={
+              <ProtectedRoute allowedRole="admin">
+                <AdminGrievances />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </div>
     </AuthProvider>
   );
 }
