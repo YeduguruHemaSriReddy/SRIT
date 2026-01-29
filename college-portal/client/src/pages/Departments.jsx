@@ -1,125 +1,118 @@
 import Footer from "../components/Footer";
+import { Cpu, Zap, Settings, PenTool, Radio, Code2, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
-import {
-  Cpu,
-  Code,
-  Database,
-  Zap,
-  Plug,
-  Cog,
-  Building2,
-} from "lucide-react";
-
-const departments = [
-  {
-    name: "Computer Science & Engineering (CSE)",
-    icon: Code,
-    color: "from-blue-600 to-indigo-600",
-    about:
-      "CSE focuses on computing technologies, programming, algorithms, AI, ML, and software development.",
-    careers: "Software Engineer, Full Stack Developer, Data Scientist, AI Engineer",
-  },
-  {
-    name: "Computer Science & Engineering (CSM)",
-    icon: Cpu,
-    color: "from-purple-600 to-pink-600",
-    about:
-      "CSM integrates Computer Science with Artificial Intelligence and Machine Learning.",
-    careers: "ML Engineer, AI Specialist, Data Analyst",
-  },
-  {
-    name: "Computer Science & Engineering (CSD)",
-    icon: Database,
-    color: "from-cyan-600 to-blue-500",
-    about:
-      "CSD emphasizes data engineering, analytics, big data technologies, and databases.",
-    careers: "Data Engineer, Data Analyst, Cloud Engineer",
-  },
-  {
-    name: "Electronics & Communication Engineering (ECE)",
-    icon: Zap,
-    color: "from-orange-500 to-red-500",
-    about:
-      "ECE covers electronics, communication systems, VLSI, embedded systems, and IoT.",
-    careers: "Electronics Engineer, VLSI Engineer, Network Engineer",
-  },
-  {
-    name: "Electrical & Electronics Engineering (EEE)",
-    icon: Plug,
-    color: "from-yellow-500 to-orange-500",
-    about:
-      "EEE focuses on power systems, electrical machines, control systems, and renewable energy.",
-    careers: "Electrical Engineer, Power Engineer, Control Engineer",
-  },
-  {
-    name: "Mechanical Engineering (MEC)",
-    icon: Cog,
-    color: "from-slate-600 to-gray-700",
-    about:
-      "Mechanical Engineering deals with design, manufacturing, thermal engineering, and automation.",
-    careers: "Design Engineer, Production Engineer, Automotive Engineer",
-  },
-  {
-    name: "Civil Engineering (CIVIL)",
-    icon: Building2,
-    color: "from-emerald-600 to-teal-600",
-    about:
-      "Civil Engineering focuses on construction, infrastructure, structural design, and planning.",
-    careers: "Civil Engineer, Structural Engineer, Site Engineer",
-  },
-];
 
 export default function Departments() {
-  return (
-    <div className="min-h-screen bg-slate-950 text-white">
+  const departments = [
+    {
+      id: "cse",
+      name: "Computer Science",
+      abbr: "CSE",
+      desc: "Exploring the frontiers of computing, AI, and software engineering.",
+      icon: Code2,
+      color: "blue"
+    },
+    {
+      id: "ece",
+      name: "Electronics & Comm.",
+      abbr: "ECE",
+      desc: "Bridging the gap between hardware and communication systems.",
+      icon: Radio,
+      color: "indigo"
+    },
+    {
+      id: "eee",
+      name: "Electrical & Electronics",
+      abbr: "EEE",
+      desc: "Powering the future with sustainable energy solutions.",
+      icon: Zap,
+      color: "yellow"
+    },
+    {
+      id: "me",
+      name: "Mechanical Engineering",
+      abbr: "ME",
+      desc: "Designing and manufacturing the machines of tomorrow.",
+      icon: Settings,
+      color: "orange"
+    },
+    {
+      id: "ce",
+      name: "Civil Engineering",
+      abbr: "CE",
+      desc: "Building the infrastructure for a sustainable world.",
+      icon: PenTool,
+      color: "green"
+    },
+    {
+      id: "ai",
+      name: "Artificial Intelligence",
+      abbr: "CSM",
+      desc: "Creating intelligent systems for complex problem solving.",
+      icon: Cpu,
+      color: "purple"
+    }
+  ];
 
-      {/* ================= HERO ================= */}
-      <section className="pt-36 pb-24 bg-gradient-to-br from-indigo-600 via-blue-600 to-cyan-500">
-        <div className="max-w-6xl mx-auto px-6 text-center">
-          <motion.h1
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-extrabold mb-6"
-          >
-            Academic Departments
-          </motion.h1>
-          <p className="text-xl opacity-90 max-w-4xl mx-auto">
-            SRIT Anantapur offers industry-oriented undergraduate programs
-            designed to build strong technical and professional foundations.
+  const getColorClass = (color) => {
+    const map = {
+      blue: "text-blue-600 bg-blue-100 group-hover:bg-indigo-600 group-hover:text-white",
+      indigo: "text-indigo-600 bg-indigo-100 group-hover:bg-indigo-600 group-hover:text-white",
+      yellow: "text-yellow-600 bg-yellow-100 group-hover:bg-indigo-600 group-hover:text-white",
+      orange: "text-orange-600 bg-orange-100 group-hover:bg-indigo-600 group-hover:text-white",
+      green: "text-green-600 bg-green-100 group-hover:bg-indigo-600 group-hover:text-white",
+      purple: "text-purple-600 bg-purple-100 group-hover:bg-indigo-600 group-hover:text-white",
+    };
+    return map[color] || map.blue;
+  };
+
+  return (
+    <div className="min-h-screen bg-blue-50 font-sans">
+
+      {/* Hero */}
+      <section className="bg-blue-50 py-20 text-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h1 className="text-5xl font-bold text-slate-900 mb-6">
+            Academic <span className="text-orange-500">Departments</span>
+          </h1>
+          <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+            Our departments are centers of excellence, fostering innovation and providing rigorous academic training.
           </p>
         </div>
       </section>
 
-      {/* ================= DEPARTMENTS GRID ================= */}
-      <section className="py-24 bg-slate-900">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-          {departments.map((dept, index) => {
+      {/* Departments Grid */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {departments.map((dept, i) => {
             const Icon = dept.icon;
             return (
               <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
+                key={dept.id}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className={`rounded-2xl p-8 bg-gradient-to-br ${dept.color} shadow-xl hover:scale-[1.03] transition`}
+                transition={{ delay: i * 0.1 }}
+                className={`rounded-2xl p-8 shadow-lg border border-slate-100 group cursor-pointer bg-white ${getColorClass(dept.color)} hover:shadow-2xl transition-all`}
               >
-                <Icon className="w-12 h-12 mb-4 text-white" />
-
-                <h3 className="text-2xl font-bold mb-3">
+                <div className="flex justify-between items-start mb-6">
+                  <div className={`p-4 rounded-xl ${getColorClass(dept.color)} transition-colors`}>
+                    <Icon className="h-8 w-8" />
+                  </div>
+                  <span className="text-4xl font-black text-slate-100 group-hover:text-white transition-colors">
+                    {dept.abbr}
+                  </span>
+                </div>
+                
+                <h3 className="text-2xl font-bold mb-3 text-slate-900 group-hover:text-white transition-colors">
                   {dept.name}
                 </h3>
-
-                <p className="text-white/90 mb-4 leading-relaxed">
-                  {dept.about}
+                <p className="text-slate-600 mb-6 group-hover:text-white/90 transition-colors">
+                  {dept.desc}
                 </p>
-
-                <div className="mt-4">
-                  <p className="text-sm font-semibold uppercase tracking-wide">
-                    Career Opportunities
-                  </p>
-                  <p className="text-sm text-white/90 mt-1">
-                    {dept.careers}
-                  </p>
+                
+                <div className="flex items-center text-blue-600 font-semibold group-hover:text-white transition-colors">
+                  Explore Department <ArrowRight className="ml-2 h-4 w-4" />
                 </div>
               </motion.div>
             );
@@ -127,15 +120,23 @@ export default function Departments() {
         </div>
       </section>
 
-      {/* ================= WHY SRIT ================= */}
-      <section className="py-24 bg-gradient-to-br from-slate-800 to-slate-900 text-center">
-        <h2 className="text-4xl font-bold mb-6">
-          Why Choose SRIT?
-        </h2>
-        <p className="max-w-4xl mx-auto text-lg opacity-80">
-          Industry-aligned curriculum • Experienced faculty • Modern laboratories •
-          Strong placement support • Holistic student development
-        </p>
+      {/* Why Choose SRIT */}
+      <section className="py-20 bg-blue-50 text-center">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold mb-8 text-slate-900">Why Choose SRIT?</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              { title: "Expert Faculty", desc: "Learn from Ph.D. holders and industry veterans." },
+              { title: "Modern Labs", desc: "Hands-on experience with cutting-edge equipment." },
+              { title: "Industry Ties", desc: "Strong partnerships for internships and placements." },
+            ].map((feature, i) => (
+              <div key={i} className="bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-white/10 hover:bg-indigo-600 hover:text-white transition-colors">
+                <h3 className="text-xl font-bold mb-3 text-orange-400 group-hover:text-white">{feature.title}</h3>
+                <p className="text-blue-100 group-hover:text-white">{feature.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       <Footer />

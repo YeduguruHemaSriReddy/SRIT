@@ -12,10 +12,10 @@ import { Button } from "../components/ui/button";
 
 export default function Placements() {
   const stats = [
-    { icon: Users, value: "850+", label: "Students Placed", color: "from-blue-500 to-indigo-600" },
-    { icon: Building, value: "120+", label: "Recruiting Companies", color: "from-emerald-500 to-teal-600" },
-    { icon: TrendingUp, value: "12 LPA", label: "Highest Package", color: "from-orange-500 to-red-600" },
-    { icon: Award, value: "4.5 LPA", label: "Average Package", color: "from-purple-500 to-pink-600" },
+    { icon: Users, value: "850+", label: "Students Placed", color: "from-blue-200 to-blue-300" },
+    { icon: Building, value: "120+", label: "Recruiting Companies", color: "from-emerald-200 to-teal-300" },
+    { icon: TrendingUp, value: "12 LPA", label: "Highest Package", color: "from-blue-200 to-blue-300" },
+    { icon: Award, value: "4.5 LPA", label: "Average Package", color: "from-purple-200 to-pink-300" },
   ];
 
   const branches = [
@@ -42,20 +42,17 @@ export default function Placements() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-orange-50">
+    <div className="min-h-screen bg-blue-50">
 
       {/* ================= HERO ================= */}
-      <section className="pt-36 pb-28 text-center relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-blue-500 opacity-10"></div>
-
+      <section className="pt-36 pb-28 text-center">
         <motion.h1
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-5xl md:text-6xl font-extrabold mb-6"
+          className="text-5xl md:text-6xl font-extrabold mb-6 text-slate-900"
         >
-          Career Opportunities at <span className="text-primary">SRIT</span>
+          Career Opportunities at <span className="text-orange-500">SRIT</span>
         </motion.h1>
-
         <p className="text-xl text-gray-700 max-w-4xl mx-auto">
           Our Training & Placement Cell ensures students are industry-ready
           through continuous skill development, internships, and top-company
@@ -74,7 +71,7 @@ export default function Placements() {
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className={`rounded-3xl p-8 text-white shadow-2xl bg-gradient-to-br ${item.color}`}
+                className={`rounded-3xl p-8 text-slate-900 shadow-lg bg-gradient-to-br ${item.color} hover:from-indigo-500 hover:to-indigo-700 transition-colors`}
               >
                 <Icon className="w-10 h-10 mb-4" />
                 <h3 className="text-4xl font-extrabold">{item.value}</h3>
@@ -86,7 +83,7 @@ export default function Placements() {
       </section>
 
       {/* ================= BRANCH WISE ================= */}
-      <section className="py-24 bg-gradient-to-r from-purple-600 to-indigo-600 text-white">
+      <section className="py-24 text-slate-900">
         <div className="max-w-6xl mx-auto px-6">
           <h2 className="text-4xl font-bold text-center mb-16">
             Branch-Wise Placement Performance
@@ -99,9 +96,9 @@ export default function Placements() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                className="bg-white/15 backdrop-blur-lg p-8 rounded-2xl shadow-lg text-center"
+                className="bg-blue-100 p-8 rounded-2xl shadow-md text-center hover:bg-indigo-600 hover:text-white transition-colors"
               >
-                <GraduationCap className="w-10 h-10 mx-auto mb-4 text-yellow-300" />
+                <GraduationCap className="w-10 h-10 mx-auto mb-4 text-orange-500" />
                 <h3 className="text-xl font-bold">{b.name}</h3>
                 <p className="text-3xl font-extrabold mt-3">{b.rate}</p>
                 <p className="opacity-80 mt-1">Placement Rate</p>
@@ -114,7 +111,7 @@ export default function Placements() {
       {/* ================= TRAINING ================= */}
       <section className="py-24">
         <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center mb-14">
+          <h2 className="text-4xl font-bold text-center mb-14 text-slate-900">
             Training & Career Development
           </h2>
 
@@ -125,10 +122,10 @@ export default function Placements() {
                 initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                className="flex items-start gap-4 bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition"
+                className="flex items-start gap-4 bg-blue-100 p-6 rounded-2xl shadow-md hover:bg-indigo-600 hover:text-white transition-colors"
               >
-                <Star className="w-7 h-7 text-primary mt-1" />
-                <p className="text-gray-700 font-medium">{f}</p>
+                <Star className="w-7 h-7 text-orange-500 mt-1" />
+                <p className="font-medium">{f}</p>
               </motion.div>
             ))}
           </div>
@@ -136,12 +133,12 @@ export default function Placements() {
       </section>
 
       {/* ================= RECRUITERS ================= */}
-      <section className="py-24 bg-gradient-to-b from-gray-100 to-white">
-        <div className="max-w-6xl mx-auto px-6 text-center">
-          <h2 className="text-4xl font-bold mb-6">
+      <section className="py-24 text-center">
+        <div className="max-w-6xl mx-auto px-6">
+          <h2 className="text-4xl font-bold mb-6 text-slate-900">
             Top Recruiters
           </h2>
-          <p className="text-gray-600 mb-12">
+          <p className="text-gray-700 mb-12">
             Leading companies regularly recruit SRIT graduates
           </p>
 
@@ -152,7 +149,7 @@ export default function Placements() {
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                className="px-6 py-3 rounded-full bg-white shadow-md font-semibold text-gray-700 hover:bg-primary hover:text-white transition"
+                className="px-6 py-3 rounded-full bg-blue-100 shadow-md font-semibold text-slate-900 hover:bg-indigo-600 hover:text-white transition-colors"
               >
                 {r}
               </motion.div>
@@ -162,18 +159,20 @@ export default function Placements() {
       </section>
 
       {/* ================= CTA ================= */}
-      <section className="py-28 bg-gradient-to-r from-orange-500 to-red-600 text-white text-center">
-        <h2 className="text-4xl md:text-5xl font-extrabold mb-6">
-          Transforming Students into Professionals
-        </h2>
-        <p className="text-lg max-w-3xl mx-auto mb-10 opacity-95">
-          SRIT’s placement ecosystem is designed to ensure every student gets
-          the opportunity to succeed in their chosen career path.
-        </p>
+      <section className="py-28 text-center">
+        <div className="max-w-3xl mx-auto px-6">
+          <h2 className="text-4xl md:text-5xl font-extrabold mb-6 text-slate-900">
+            Transforming Students into Professionals
+          </h2>
+          <p className="text-lg max-w-3xl mx-auto mb-10 text-slate-700">
+            SRIT’s placement ecosystem is designed to ensure every student gets
+            the opportunity to succeed in their chosen career path.
+          </p>
 
-        <Button size="lg" variant="secondary" className="px-12 py-6 text-lg">
-          Contact Placement Cell
-        </Button>
+          <Button size="lg" variant="secondary" className="px-12 py-6 text-lg bg-blue-100 hover:bg-indigo-600 hover:text-white transition-colors">
+            Contact Placement Cell
+          </Button>
+        </div>
       </section>
 
       <Footer />
