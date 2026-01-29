@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { 
   Users, 
@@ -61,19 +62,16 @@ const testimonials = [
     name: "Arjun Varma",
     role: "B.Tech CSE, 4th Year",
     text: "The tech clubs at SRIT changed my perspective on engineering. I'm not just learning to code; I'm learning to build products that matter.",
-    img: "https://i.pravatar.cc/150?u=arjun",
   },
   {
     name: "Priya Reddy",
     role: "B.Tech EEE, Alumna",
     text: "Campus life here is a perfect balance. One day you're in a high-tech lab, and the next you're performing on stage at the annual fest.",
-    img: "https://i.pravatar.cc/150?u=priya",
   },
   {
     name: "Karthik S.",
     role: "B.Tech Mech, 3rd Year",
     text: "The sports facilities are top-notch. Representing SRIT in the inter-college cricket tournament was a highlight of my college life.",
-    img: "https://i.pravatar.cc/150?u=karthik",
   },
 ];
 
@@ -85,6 +83,8 @@ const stats = [
 ];
 
 export default function CampusLife() {
+  const navigate = useNavigate();
+
   const fadeInUp = {
     initial: { opacity: 0, y: 30 },
     whileInView: { opacity: 1, y: 0 },
@@ -94,8 +94,6 @@ export default function CampusLife() {
 
   return (
     <div className="min-h-screen bg-blue-50 text-slate-900">
-
-      {/* HERO */}
       <section className="relative h-[60vh] flex items-center justify-center bg-blue-100">
         <div className="absolute inset-0 opacity-30">
           <img 
@@ -109,9 +107,9 @@ export default function CampusLife() {
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-black text-orange-600 mb-6"
+            className="text-5xl md:text-7xl font-black text-blue-700 mb-6"
           >
-            Campus Life
+            Campus <span className="text-orange-500">Life</span>
           </motion.h1>
 
           <p className="text-xl max-w-2xl mx-auto text-slate-700">
@@ -120,12 +118,11 @@ export default function CampusLife() {
         </div>
       </section>
 
-      {/* STATS */}
       <section className="py-12 bg-white">
         <div className="container mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
           {stats.map((stat, i) => (
             <div key={i} className="text-center">
-              <div className="text-4xl font-black text-orange-600">{stat.value}</div>
+              <div className="text-4xl font-black text-blue-700">{stat.value}</div>
               <div className="text-sm font-bold uppercase text-slate-700">
                 {stat.title}
               </div>
@@ -134,19 +131,17 @@ export default function CampusLife() {
         </div>
       </section>
 
-      {/* FEATURES */}
       <section className="py-24 bg-blue-50">
         <div className="container mx-auto px-6 grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {campusLife.map((item, index) => (
             <motion.div
               key={index}
               {...fadeInUp}
-              className="bg-white rounded-3xl overflow-hidden shadow-md"
+              className="bg-white rounded-[2.5rem] overflow-hidden shadow-md"
             >
               <img src={item.img} className="h-64 w-full object-cover" alt={item.title} />
-
               <div className="p-8">
-                <h3 className="text-2xl font-black text-orange-600 mb-4">
+                <h3 className="text-2xl font-black text-blue-700 mb-4">
                   {item.title}
                 </h3>
                 <p className="text-slate-700">{item.desc}</p>
@@ -156,11 +151,10 @@ export default function CampusLife() {
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
       <section className="py-24 bg-white">
         <div className="container mx-auto px-6">
-          <h2 className="text-4xl font-black text-center text-orange-600 mb-16">
-            Voices of SRIT
+          <h2 className="text-4xl font-black text-center text-blue-700 mb-16">
+            Voices of <span className="text-orange-500">SRIT</span>
           </h2>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -168,9 +162,9 @@ export default function CampusLife() {
               <motion.div
                 key={i}
                 {...fadeInUp}
-                className="bg-blue-50 p-8 rounded-3xl"
+                className="bg-blue-50 p-8 rounded-[2.5rem]"
               >
-                <h4 className="font-bold text-orange-600">{t.name}</h4>
+                <h4 className="font-bold text-blue-700">{t.name}</h4>
                 <p className="text-sm text-slate-600 mb-4">{t.role}</p>
                 <p className="text-slate-700 italic">"{t.text}"</p>
               </motion.div>
@@ -179,12 +173,14 @@ export default function CampusLife() {
         </div>
       </section>
 
-      {/* CTA */}
       <section className="py-20 bg-blue-100 text-center">
-        <h2 className="text-4xl md:text-5xl font-black text-orange-600 mb-8">
+        <h2 className="text-4xl md:text-5xl font-black text-blue-700 mb-8">
           Ready to start your journey at SRIT?
         </h2>
-        <button className="px-10 py-4 bg-blue-600 text-white rounded-full font-bold">
+        <button
+          onClick={() => navigate("/admissions")}
+          className="px-10 py-4 bg-blue-600 text-white rounded-full font-bold hover:bg-indigo-600 transition"
+        >
           Apply for Admission 2026
         </button>
       </section>
