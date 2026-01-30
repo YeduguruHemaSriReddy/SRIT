@@ -15,9 +15,7 @@ export default function StudentDashboard() {
   }, []);
 
   const loadDashboard = async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
     const { data: student } = await supabase
@@ -33,7 +31,7 @@ export default function StudentDashboard() {
       .select("subject_id")
       .eq("student_id", student.id);
 
-    const subjectIds = subs?.map((s) => s.subject_id) || [];
+    const subjectIds = subs?.map(s => s.subject_id) || [];
 
     const { data: attendanceData } = await supabase
       .from("attendance")
@@ -41,7 +39,7 @@ export default function StudentDashboard() {
       .eq("student_id", student.id);
 
     if (attendanceData?.length) {
-      const present = attendanceData.filter((a) => a.status).length;
+      const present = attendanceData.filter(a => a.status).length;
       setAttendance(Math.round((present / attendanceData.length) * 100));
     }
 
@@ -52,7 +50,7 @@ export default function StudentDashboard() {
 
     setMarksCount(marks?.length || 0);
 
-    if (subjectIds.length > 0) {
+    if (subjectIds.length) {
       const { data: mats } = await supabase
         .from("materials")
         .select("id")
@@ -69,9 +67,7 @@ export default function StudentDashboard() {
 
     if (fees?.status) setFeesStatus(fees.status);
 
-    const today = new Date().toLocaleDateString("en-US", {
-      weekday: "long",
-    });
+    const today = new Date().toLocaleDateString("en-US", { weekday: "long" });
 
     const { data: timetable } = await supabase
       .from("faculty_timetable")
@@ -91,49 +87,34 @@ export default function StudentDashboard() {
   };
 
   return (
-    <div className="min-h-screen p-8 bg-gradient-to-br from-slate-100 via-slate-200 to-slate-300">
+    <div className="relative min-h-screen p-8 overflow-hidden
+      bg-gradient-to-br from-slate-100 via-blue-100 to-violet-100">
+
+      {/* FLOATING BACKGROUND SHAPES */}
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute w-72 h-72 bg-blue-300/30 rounded-full blur-3xl top-20 left-10 animate-pulse" />
+        <div className="absolute w-96 h-96 bg-violet-300/30 rounded-full blur-3xl bottom-20 right-10 animate-pulse" />
+      </div>
 
       {/* TITLE */}
       <motion.h1
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-2xl font-bold text-slate-800 mb-8"
+        className="text-3xl font-bold text-slate-800 mb-10"
       >
         Student Dashboard
       </motion.h1>
 
       {/* STATS */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
-        <StatCard
-          title="Attendance"
-          value={`${attendance}%`}
-          accent={
-            attendance >= 75
-              ? "from-emerald-400 to-emerald-500"
-              : attendance >= 65
-              ? "from-amber-400 to-orange-400"
-              : "from-rose-400 to-red-500"
-          }
-        />
-        <StatCard
-          title="Marks"
-          value={marksCount > 0 ? "Published" : "Not Published"}
-          accent="from-indigo-400 to-indigo-500"
-        />
-        <StatCard
-          title="Materials"
-          value={materialsCount}
-          accent="from-sky-400 to-sky-500"
-        />
-        <StatCard
-          title="Fees"
-          value={feesStatus}
-          accent="from-violet-400 to-purple-500"
-        />
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
+        <AttendanceCard value={attendance} />
+        <StatCard title="Marks" value={marksCount > 0 ? "Published" : "Not Published"} color="indigo" />
+        <StatCard title="Materials" value={materialsCount} color="sky" />
+        <StatCard title="Fees" value={feesStatus} color="violet" />
       </div>
 
       {/* CONTENT */}
-      <div className="grid md:grid-cols-2 gap-6">
+      <div className="grid md:grid-cols-2 gap-8">
         <GlassSection title="Today's Classes">
           {todayClasses.length === 0 ? (
             <p className="text-slate-500">No classes today</p>
@@ -162,18 +143,46 @@ export default function StudentDashboard() {
   );
 }
 
-/* COMPONENTS */
+/* ================= COMPONENTS ================= */
 
-function StatCard({ title, value, accent }) {
+function StatCard({ title, value, color }) {
   return (
     <motion.div
-      whileHover={{ y: -4 }}
-      className="bg-white/80 backdrop-blur-xl border border-white/40
-      rounded-2xl p-5 shadow-md"
+      whileHover={{ y: -6 }}
+      className="relative bg-white/80 backdrop-blur-xl rounded-2xl p-5
+      border border-white/40 shadow-lg"
     >
-      <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${accent} mb-3`} />
-      <p className="text-sm text-slate-500">{title}</p>
+      <div className={`absolute top-0 left-0 h-1 w-full rounded-t-2xl
+        bg-gradient-to-r from-${color}-400 to-${color}-600`} />
+      <p className="text-sm text-slate-500 mt-2">{title}</p>
       <p className="text-2xl font-bold text-slate-800">{value}</p>
+    </motion.div>
+  );
+}
+
+function AttendanceCard({ value }) {
+  const barColor =
+    value >= 75 ? "bg-emerald-500"
+      : value >= 65 ? "bg-amber-500"
+      : "bg-rose-500";
+
+  return (
+    <motion.div
+      whileHover={{ y: -6 }}
+      className="bg-white/80 backdrop-blur-xl rounded-2xl p-5
+      border border-white/40 shadow-lg"
+    >
+      <p className="text-sm text-slate-500 mb-2">Attendance</p>
+      <p className="text-2xl font-bold text-slate-800 mb-4">{value}%</p>
+
+      <div className="w-full h-3 bg-slate-200 rounded-full overflow-hidden">
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: `${value}%` }}
+          transition={{ duration: 1 }}
+          className={`h-full ${barColor}`}
+        />
+      </div>
     </motion.div>
   );
 }
@@ -183,10 +192,10 @@ function GlassSection({ title, children }) {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white/80 backdrop-blur-xl border border-white/40
-      rounded-2xl p-6 shadow-md"
+      className="bg-white/80 backdrop-blur-xl rounded-2xl p-6
+      border border-white/40 shadow-lg"
     >
-      <h2 className="font-semibold text-slate-800 mb-3">{title}</h2>
+      <h2 className="font-semibold text-slate-800 mb-4">{title}</h2>
       {children}
     </motion.div>
   );
