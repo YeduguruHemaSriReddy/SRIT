@@ -2,6 +2,9 @@
   "name": "college-portal-client",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "@supabase/supabase-js": "^2.91.0",
     "@testing-library/dom": "^10.4.1",

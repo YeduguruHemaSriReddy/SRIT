@@ -1,0 +1,10 @@
+# Speed up uploads by ignoring server and unnecessary files
+server/
+**/node_modules
+**/build
+*.log
+.DS_Store
+.vscode/
+.env.local
+.env.development
+.env.test
