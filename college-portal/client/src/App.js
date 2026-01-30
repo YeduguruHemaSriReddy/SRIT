@@ -15,6 +15,7 @@ import Home from "./pages/Home";
 import About from "./pages/About";
 import Admissions from "./pages/Admissions";
 import Departments from "./pages/Departments";
+import DepartmentDetails from "./pages/DepartmentDetails";
 import CampusLife from "./pages/CampusLife";
 import Placements from "./pages/Placements";
 import Contact from "./pages/Contact";
@@ -108,6 +109,7 @@ export default function App() {
             <Route path="/placements" element={<Placements />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/departments/:tag" element={<DepartmentDetails />} />
 
             {/* ===== STUDENT ===== */}
             <Route path="/student" element={<StudentLayout />}>
