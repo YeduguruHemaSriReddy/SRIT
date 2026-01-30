@@ -14,46 +14,34 @@ import Footer from "../components/Footer";
 
 const campusLife = [
   {
-    title: "Innovation Hub",
-    desc: "State-of-the-art labs where theory meets reality. Our research cells are the birthplace of next-gen ideas.",
-    img: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070&auto=format&fit=crop",
-    icon: Microscope,
-    tag: "Research"
+    title: "Shutterbugs Club",
+    desc: "The Shutterbugs Club nurtures creativity in photography and videography, documenting campus life, events, and institutional milestones through a professional visual lens.",
+    img: "/images/clubs/shutterbugs.png",
   },
   {
-    title: "The Knowledge Hub",
-    desc: "A massive central library with thousands of journals and digital access to global research papers.",
-    img: "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=2070&auto=format&fit=crop",
-    icon: BookOpen,
-    tag: "Academic"
+    title: "Chairman’s Club",
+    desc: "The Chairman’s Club promotes leadership, discipline, and student participation by organizing institutional initiatives and supporting academic and cultural activities.",
+    img: "/images/clubs/chairmans-club.png",
   },
   {
-    title: "Arena of Champions",
-    desc: "From professional cricket grounds to indoor badminton courts, we prioritize physical excellence.",
-    img: "https://images.unsplash.com/photo-1526676023131-d35216858f0a?q=80&w=2070&auto=format&fit=crop",
-    icon: Trophy,
-    tag: "Sports"
+    title: "NSS",
+    desc: "The NSS unit engages students in community service and social outreach programs, fostering civic responsibility, empathy, and national development.",
+    img: "/images/clubs/nss.jpg",
   },
   {
-    title: "Creative Pulse",
-    desc: "Annual fests, music nights, and drama workshops that keep the campus spirit alive and thriving.",
-    img: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=2070&auto=format&fit=crop",
-    icon: Music,
-    tag: "Cultural"
+    title: "NCC",
+    desc: "The NCC unit instills discipline, leadership, and a sense of national pride through structured training, drills, and character-building activities.",
+    img: "/images/clubs/ncc.jpg",
   },
   {
-    title: "Tech Society",
-    desc: "Student-run coding clubs and robotics teams that compete and win at national level hackathons.",
-    img: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=2070&auto=format&fit=crop",
-    icon: Zap,
-    tag: "Technology"
+    title: "Toastmasters Club",
+    desc: "The Toastmasters Club develops effective communication and leadership skills by providing a structured environment for public speaking, presentations, and personal growth.",
+    img: "/images/clubs/toastmasters.jpg",
   },
   {
-    title: "Social Lounge",
-    desc: "A vibrant cafeteria serving hygienic, diverse cuisines – the favorite hangout for brainstorming.",
-    img: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop",
-    icon: Coffee,
-    tag: "Lifestyle"
+    title: "Programming Club",
+    desc: "The Programming Club encourages problem-solving and technical excellence through coding challenges, workshops, hackathons, and collaborative software development.",
+    img: "/images/clubs/prog.png",
   },
 ];
 
@@ -132,24 +120,37 @@ export default function CampusLife() {
       </section>
 
       <section className="py-24 bg-blue-50">
-        <div className="container mx-auto px-6 grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {campusLife.map((item, index) => (
-            <motion.div
-              key={index}
-              {...fadeInUp}
-              className="bg-white rounded-[2.5rem] overflow-hidden shadow-md"
-            >
-              <img src={item.img} className="h-64 w-full object-cover" alt={item.title} />
-              <div className="p-8">
-                <h3 className="text-2xl font-black text-blue-700 mb-4">
-                  {item.title}
-                </h3>
-                <p className="text-slate-700">{item.desc}</p>
-              </div>
-            </motion.div>
-          ))}
+  <div className="container mx-auto px-6 grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+    {campusLife.map((item, index) => (
+      <motion.div
+        key={index}
+        whileHover={{ 
+          scale: 1.06,
+          y: -6,
+          boxShadow: "0px 20px 40px rgba(0,0,0,0.2)"
+        }}
+        transition={{ type: "spring", stiffness: 200, damping: 12 }}
+        className="bg-white rounded-[2.5rem] overflow-hidden shadow-md cursor-pointer"
+      >
+        <div className="relative overflow-hidden">
+          <motion.img
+            src={item.img}
+            alt={item.title}
+            className="h-64 w-full object-cover"
+            whileHover={{ scale: 1.08 }}
+            transition={{ duration: 0.8, ease: "easeInOut" }}
+          />
         </div>
-      </section>
+
+        <div className="p-8">
+          <h3 className="text-2xl font-black text-blue-700 mb-3">{item.title}</h3>
+          <p className="text-slate-700">{item.desc}</p>
+        </div>
+      </motion.div>
+    ))}
+  </div>
+</section>
+
 
       <section className="py-24 bg-white">
         <div className="container mx-auto px-6">

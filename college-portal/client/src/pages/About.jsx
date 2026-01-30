@@ -73,11 +73,14 @@ export default function About() {
       <section className="py-24 bg-blue-50">
         <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
           <div className="rounded-3xl overflow-hidden">
-            <img
-              src="https://images.unsplash.com/photo-1562774053-701939374585"
-              alt="Campus"
-              className="w-full h-full object-cover"
-            />
+            <div className="relative rounded-3xl overflow-hidden group">
+  <img
+    src="/images/srit-campus.jpg"
+    className="w-full h-full object-cover"
+  />
+  <div className="absolute inset-0 bg-blue-900/20 opacity-0 group-hover:opacity-100 transition duration-500" />
+</div>
+
           </div>
 
           <div className="space-y-6">
