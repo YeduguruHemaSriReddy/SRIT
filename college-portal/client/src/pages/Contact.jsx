@@ -14,45 +14,20 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 
-/* ================= REUSABLE GLASS CARD ================= */
-function GlassCard({ children, className = "" }) {
+/* ================= REUSABLE CARD ================= */
+function Card({ children, className = "" }) {
   return (
     <motion.div
-      whileHover={{
-        y: -8,
-        rotateX: 4,
-        rotateY: -4,
-        scale: 1.02,
-      }}
-      transition={{ type: "spring", stiffness: 200, damping: 18 }}
-      className={`
-        relative group
-        bg-white/10 backdrop-blur-2xl
-        border border-white/20
-        rounded-[2.5rem]
-        shadow-[0_0_40px_rgba(56,189,248,0.25)]
-        hover:shadow-[0_0_80px_rgba(251,191,36,0.35)]
-        overflow-hidden
-        ${className}
-      `}
+      whileHover={{ y: -6 }}
+      transition={{ type: "spring", stiffness: 160, damping: 18 }}
+      className={`bg-white border border-gray-200 rounded-2xl
+      shadow-md hover:shadow-xl transition ${className}`}
     >
-      {/* neon edge */}
-      <div className="absolute inset-0 rounded-[2.5rem] pointer-events-none
-        opacity-0 group-hover:opacity-100 transition
-        ring-1 ring-cyan-300/40" />
-
-      {/* light sweep */}
-      <div className="absolute -inset-x-1/2 -inset-y-full
-        bg-gradient-to-r from-transparent via-white/20 to-transparent
-        rotate-12 group-hover:translate-y-[200%]
-        transition duration-700" />
-
       {children}
     </motion.div>
   );
 }
 
-/* ================= MAIN PAGE ================= */
 export default function Contact() {
   const [form, setForm] = useState({
     name: "",
@@ -71,31 +46,34 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen font-sans text-slate-100
-      bg-gradient-to-br from-[#020617] via-[#0B1F3A] to-[#164E63]">
+    /* 🔑 FIX FOR FIXED NAVBAR */
+    <div className="min-h-screen font-sans bg-white text-black pt-[220px]">
 
       {/* ================= HERO ================= */}
-      <section className="relative pt-40 pb-32 text-center overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#38BDF855,transparent_65%)]" />
-
+      <section className="py-28 text-center px-6">
         <motion.h1
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-5xl md:text-7xl font-black mb-6
-            bg-gradient-to-r from-[#FBBF24] via-[#67E8F9] to-[#22D3EE]
-            bg-clip-text text-transparent drop-shadow-2xl"
+          transition={{ duration: 0.6 }}
+          className="text-5xl md:text-7xl font-black mb-6 text-orange-500"
         >
           Get in Touch
         </motion.h1>
 
-        <p className="text-xl max-w-2xl mx-auto text-cyan-100">
+        <p className="text-xl max-w-2xl mx-auto text-gray-700">
           We’re here to guide you — admissions, academics, or campus life.
         </p>
       </section>
 
       {/* ================= CONTACT CARDS ================= */}
-      <section className="py-20">
-        <div className="container mx-auto px-6 grid md:grid-cols-3 gap-8">
+      <motion.section
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="py-20 px-6 bg-gray-50"
+      >
+        <div className="max-w-6xl mx-auto grid md:grid-cols-3 gap-8">
           {[
             {
               icon: MapPin,
@@ -115,32 +93,37 @@ export default function Contact() {
           ].map((item, i) => {
             const Icon = item.icon;
             return (
-              <GlassCard key={i} className="p-10 text-center">
-                <div className="w-16 h-16 mx-auto mb-6 rounded-2xl
-                  bg-gradient-to-br from-[#FBBF24] to-[#22D3EE]
-                  flex items-center justify-center text-black
-                  group-hover:scale-110 transition">
+              <Card key={i} className="p-10 text-center">
+                <div
+                  className="w-16 h-16 mx-auto mb-6 rounded-xl
+                  bg-orange-500 text-white
+                  flex items-center justify-center"
+                >
                   <Icon className="w-7 h-7" />
                 </div>
-                <h4 className="text-xl font-black text-[#FBBF24] mb-2">
+                <h4 className="text-xl font-black text-orange-500 mb-2">
                   {item.title}
                 </h4>
-                <p className="text-cyan-100">{item.value}</p>
-              </GlassCard>
+                <p className="text-gray-700">{item.value}</p>
+              </Card>
             );
           })}
         </div>
-      </section>
+      </motion.section>
 
       {/* ================= FORM + INFO ================= */}
-      <section className="py-28">
-        <div className="container mx-auto px-6 grid lg:grid-cols-2 gap-16">
+      <motion.section
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="py-28 px-6"
+      >
+        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-16">
 
           {/* FORM */}
-          <GlassCard className="p-12">
-            <h3 className="text-3xl font-black mb-8
-              bg-gradient-to-r from-[#FBBF24] to-[#22D3EE]
-              bg-clip-text text-transparent">
+          <Card className="p-12">
+            <h3 className="text-3xl font-black mb-8 text-orange-500">
               Send a Message
             </h3>
 
@@ -153,12 +136,10 @@ export default function Contact() {
                   onChange={handleChange}
                   required
                   placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-                  className="w-full px-6 py-4 rounded-2xl
-                    bg-white/10 backdrop-blur-xl
-                    border border-white/20
-                    text-white placeholder:text-cyan-200
-                    focus:ring-2 focus:ring-cyan-300
-                    outline-none transition"
+                  className="w-full px-6 py-4 rounded-xl
+                  border border-gray-300
+                  focus:ring-2 focus:ring-orange-500
+                  outline-none transition"
                 />
               ))}
 
@@ -169,51 +150,47 @@ export default function Contact() {
                 rows={4}
                 required
                 placeholder="Your Message"
-                className="w-full px-6 py-4 rounded-2xl
-                  bg-white/10 backdrop-blur-xl
-                  border border-white/20
-                  text-white placeholder:text-cyan-200
-                  focus:ring-2 focus:ring-cyan-300
-                  outline-none transition"
+                className="w-full px-6 py-4 rounded-xl
+                border border-gray-300
+                focus:ring-2 focus:ring-orange-500
+                outline-none transition"
               />
 
               <button
                 type="submit"
-                className="w-full py-5 rounded-full font-black text-black
-                  bg-gradient-to-r from-[#FBBF24] to-[#22D3EE]
-                  shadow-[0_0_40px_#22D3EEAA]
-                  hover:shadow-[0_0_80px_#FBBF24AA]
-                  hover:scale-105 transition flex items-center justify-center gap-2"
+                className="w-full py-5 rounded-full font-black
+                bg-orange-500 text-white hover:bg-orange-600
+                transition flex items-center justify-center gap-2"
               >
                 <Send className="w-5 h-5" /> Send Message
               </button>
             </form>
-          </GlassCard>
+          </Card>
 
           {/* WHY SRIT */}
-          <GlassCard className="p-12">
-            <h3 className="text-2xl font-black mb-8 text-[#FBBF24]">
+          <Card className="p-12">
+            <h3 className="text-2xl font-black mb-8 text-orange-500">
               Why SRIT Support?
             </h3>
 
-            <ul className="space-y-6 text-cyan-100">
+            <ul className="space-y-6 text-gray-700">
               <li className="flex gap-4 items-center">
-                <Clock className="text-[#22D3EE]" /> 24/7 Availability
+                <Clock className="text-orange-500" /> 24/7 Availability
               </li>
               <li className="flex gap-4 items-center">
-                <ShieldCheck className="text-[#22D3EE]" /> Verified Responses
+                <ShieldCheck className="text-orange-500" /> Verified Responses
               </li>
               <li className="flex gap-4 items-center">
-                <Headphones className="text-[#22D3EE]" /> Direct Mentorship
+                <Headphones className="text-orange-500" /> Direct Mentorship
               </li>
             </ul>
-          </GlassCard>
+          </Card>
         </div>
-      </section>
+      </motion.section>
 
       {/* ================= SOCIAL ================= */}
-      <section className="py-24 text-center">
-        <h4 className="text-2xl font-black mb-10 text-cyan-100">
+      <section className="py-24 text-center px-6 bg-gray-50">
+        <h4 className="text-2xl font-black mb-10 text-orange-500">
           Join the SRIT Community
         </h4>
 
@@ -221,14 +198,12 @@ export default function Contact() {
           {[Facebook, Instagram, Linkedin].map((Icon, i) => (
             <motion.a
               key={i}
-              whileHover={{ y: -8, scale: 1.1 }}
-              className="w-16 h-16 rounded-2xl
-                bg-white/10 backdrop-blur-xl
-                border border-white/20
-                flex items-center justify-center
-                text-cyan-300 hover:text-black
-                hover:bg-gradient-to-br from-[#FBBF24] to-[#22D3EE]
-                transition"
+              whileHover={{ y: -6, scale: 1.05 }}
+              className="w-16 h-16 rounded-xl
+              bg-white border border-gray-200
+              flex items-center justify-center
+              text-blue-600 hover:bg-orange-500 hover:text-white
+              transition"
             >
               <Icon />
             </motion.a>

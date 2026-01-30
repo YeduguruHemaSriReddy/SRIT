@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import logo from "../../assets/campus/srit-logo.png";
 import {
   Users,
   UserCheck,

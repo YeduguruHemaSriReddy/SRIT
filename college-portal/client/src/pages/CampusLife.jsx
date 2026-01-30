@@ -5,7 +5,6 @@ import {
   Trophy,
   Zap,
   Gamepad2,
-  Sparkles,
   ArrowRight,
 } from "lucide-react";
 import Footer from "../components/Footer";
@@ -14,37 +13,37 @@ import Footer from "../components/Footer";
 const campusLife = [
   {
     title: "Shutterbugs Club",
-    desc: "The Shutterbugs Club nurtures creativity in photography and videography, documenting campus life, events, and institutional milestones through a professional visual lens.",
+    desc: "The Shutterbugs Club nurtures creativity in photography and videography, documenting campus life and institutional milestones.",
     img: "/images/clubs/shutterbugs.png",
     tag: "Creative",
   },
   {
     title: "Chairman’s Club",
-    desc: "The Chairman’s Club promotes leadership, discipline, and student participation by organizing institutional initiatives and supporting academic and cultural activities.",
+    desc: "The Chairman’s Club promotes leadership, discipline, and student participation in institutional initiatives.",
     img: "/images/clubs/chairmans-club.png",
     tag: "Leadership",
   },
   {
     title: "NSS",
-    desc: "The NSS unit engages students in community service and social outreach programs, fostering civic responsibility, empathy, and national development.",
+    desc: "The NSS unit engages students in community service and social outreach programs.",
     img: "/images/clubs/nss.jpg",
     tag: "Social",
   },
   {
     title: "NCC",
-    desc: "The NCC unit instills discipline, leadership, and a sense of national pride through structured training, drills, and character-building activities.",
+    desc: "The NCC unit instills discipline, leadership, and national pride through structured training.",
     img: "/images/clubs/ncc.jpg",
     tag: "Defence",
   },
   {
     title: "Toastmasters Club",
-    desc: "The Toastmasters Club develops effective communication and leadership skills by providing a structured environment for public speaking and personal growth.",
+    desc: "The Toastmasters Club develops communication and leadership skills through public speaking.",
     img: "/images/clubs/toastmasters.jpg",
     tag: "Communication",
   },
   {
     title: "Programming Club",
-    desc: "The Programming Club encourages problem-solving and technical excellence through coding challenges, hackathons, and collaborative development.",
+    desc: "The Programming Club encourages problem-solving and technical excellence through coding activities.",
     img: "/images/clubs/prog.png",
     tag: "Technology",
   },
@@ -62,107 +61,96 @@ export default function CampusLife() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen font-sans bg-gradient-to-br from-[#020617] via-[#0B1F3A] to-[#164E63] text-[#F8FAFC]">
+    /* 🔑 FIX FOR FIXED NAVBAR */
+    <div className="min-h-screen font-sans bg-white text-black pt-[220px]">
 
       {/* ================= HERO ================= */}
-      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#22D3EE55,transparent_65%)]" />
+      <section className="py-28 text-center px-6">
+        <motion.h1
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-5xl md:text-7xl font-black mb-6 text-orange-500"
+        >
+          Campus Life
+        </motion.h1>
 
-        <div className="relative z-10 text-center px-6">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="inline-flex items-center gap-2 px-6 py-2
-            bg-white/10 backdrop-blur-xl text-[#FBBF24]
-            rounded-full text-sm font-extrabold uppercase mb-6
-            border border-white/20 shadow-[0_0_30px_#22D3EE66]"
-          >
-            <Sparkles size={16} /> Life @ SRIT
-          </motion.div>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-black mb-6
-            bg-gradient-to-r from-[#FBBF24] via-[#67E8F9] to-[#22D3EE]
-            bg-clip-text text-transparent drop-shadow-2xl"
-          >
-            Campus Life
-          </motion.h1>
-
-          <p className="text-lg md:text-xl max-w-3xl mx-auto text-[#E0F2FE]">
-            Where leadership, creativity, service and innovation come together.
-          </p>
-        </div>
+        <p className="text-lg md:text-xl max-w-3xl mx-auto text-gray-700">
+          Where leadership, creativity, service, and innovation come together
+          to shape holistic professionals.
+        </p>
       </section>
 
       {/* ================= STATS ================= */}
-      <section className="-mt-24 container mx-auto px-6 relative z-10">
-        <div
-          className="grid grid-cols-2 md:grid-cols-4 gap-6
-          bg-white/10 backdrop-blur-2xl
-          p-10 rounded-3xl
-          border border-white/20
-          shadow-[0_0_60px_#22D3EE55]"
-        >
+      <motion.section
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
+        className="px-6"
+      >
+        <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
           {stats.map((stat, i) => {
             const Icon = stat.icon;
             return (
-              <div key={i} className="text-center">
+              <div
+                key={i}
+                className="bg-white border border-gray-200 rounded-2xl
+                p-8 text-center shadow-md hover:shadow-xl transition"
+              >
                 <div
                   className="w-14 h-14 mx-auto mb-3 rounded-full
-                  bg-gradient-to-br from-[#FBBF24] to-[#22D3EE]
-                  flex items-center justify-center text-black shadow-lg"
+                  bg-orange-500 text-white
+                  flex items-center justify-center"
                 >
                   <Icon />
                 </div>
-                <h3 className="text-3xl font-black text-[#FBBF24]">
+                <h3 className="text-3xl font-black text-orange-500">
                   {stat.value}
                 </h3>
-                <p className="text-sm text-[#CBD5F5] uppercase font-semibold">
+                <p className="text-sm text-gray-600 uppercase font-semibold">
                   {stat.title}
                 </p>
               </div>
             );
           })}
         </div>
-      </section>
+      </motion.section>
 
       {/* ================= CLUB CARDS ================= */}
-      <section className="py-32">
-        <div className="container mx-auto px-6 grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+      <section className="py-32 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 lg:grid-cols-3 gap-10">
           {campusLife.map((item, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 40 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              whileHover={{ y: -14, scale: 1.03 }}
-              transition={{ delay: i * 0.08 }}
-              className="group rounded-3xl overflow-hidden
-              bg-white/10 backdrop-blur-2xl
-              border border-white/20
-              shadow-[0_0_40px_#22D3EE55]
-              hover:shadow-[0_0_90px_#FBBF24AA] transition"
+              whileHover={{ y: -8 }}
+              transition={{ duration: 0.4 }}
+              className="bg-white border border-gray-200
+              rounded-2xl overflow-hidden shadow-md
+              hover:shadow-xl transition"
             >
-              <div className="relative h-60 overflow-hidden">
+              <div className="h-56 overflow-hidden">
                 <img
                   src={item.img}
                   alt={item.title}
-                  className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
+                  className="w-full h-full object-cover
+                  hover:scale-105 transition duration-500"
                 />
               </div>
 
               <div className="p-8">
-                <span className="text-sm font-bold text-[#67E8F9] uppercase">
+                <span className="text-sm font-semibold text-blue-600 uppercase">
                   {item.tag}
                 </span>
 
-                <h3 className="text-2xl font-black text-[#FBBF24] mt-3 mb-3">
+                <h3 className="text-2xl font-black text-orange-500 mt-3 mb-3">
                   {item.title}
                 </h3>
 
-                <p className="text-[#CBD5F5] leading-relaxed">
+                <p className="text-gray-700 leading-relaxed">
                   {item.desc}
                 </p>
               </div>
@@ -172,22 +160,16 @@ export default function CampusLife() {
       </section>
 
       {/* ================= CTA ================= */}
-      <section className="py-28 text-center bg-gradient-to-br from-[#020617] to-[#0B1F3A]">
-        <h2
-          className="text-4xl md:text-5xl font-black mb-10
-          bg-gradient-to-r from-[#FBBF24] to-[#22D3EE]
-          bg-clip-text text-transparent"
-        >
+      <section className="py-28 text-center px-6">
+        <h2 className="text-4xl md:text-5xl font-black mb-10 text-orange-500">
           Ready to experience SRIT?
         </h2>
 
         <button
           onClick={() => navigate("/admissions")}
-          className="px-14 py-4 rounded-full font-black text-black
-          bg-gradient-to-r from-[#FBBF24] to-[#22D3EE]
-          shadow-[0_0_40px_#22D3EEAA]
-          hover:shadow-[0_0_80px_#FBBF24AA]
-          hover:scale-105 transition flex items-center gap-2 mx-auto"
+          className="px-14 py-4 rounded-full font-black
+          bg-orange-500 text-white hover:bg-orange-600
+          transition flex items-center gap-2 mx-auto"
         >
           Apply for Admission <ArrowRight size={18} />
         </button>

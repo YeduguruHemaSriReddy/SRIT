@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import supabase from "../../supabaseClient";
 import { motion } from "framer-motion";
-
+import PortalHeader from "../../components/PortalHeader";
 export default function StudentDashboard() {
   const [attendance, setAttendance] = useState(0);
   const [marksCount, setMarksCount] = useState(0);

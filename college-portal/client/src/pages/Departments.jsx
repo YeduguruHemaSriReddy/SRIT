@@ -67,42 +67,33 @@ export default function Departments() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#020617] via-[#0B1C3D] to-[#020617] text-slate-100 overflow-hidden">
+    /* 🔑 FIX FOR FIXED NAVBAR */
+    <div className="min-h-screen bg-white text-black font-sans pt-[220px]">
 
       {/* ================= HERO ================= */}
-      <section className="relative px-6 md:px-20 py-28">
-        <div className="absolute inset-0">
-          <div className="absolute -top-24 -right-24 w-96 h-96 bg-cyan-500/20 blur-3xl rounded-full" />
-          <div className="absolute bottom-0 -left-24 w-96 h-96 bg-indigo-500/20 blur-3xl rounded-full" />
-        </div>
+      <section className="px-6 py-28 text-center">
+        <p className="text-blue-600 font-semibold mb-4 flex items-center justify-center gap-2">
+          <BookOpen size={18} /> Academic Excellence
+        </p>
 
-        <div className="relative max-w-7xl mx-auto">
-          <span className="inline-flex items-center gap-2 px-5 py-2 mb-6
-                           bg-white/10 backdrop-blur-xl border border-white/20
-                           rounded-full text-cyan-300 font-semibold">
-            <BookOpen size={18} /> Academic Excellence
-          </span>
+        <h1 className="text-4xl md:text-6xl font-black mb-6 text-orange-500">
+          Academic Departments
+        </h1>
 
-          <h1 className="text-4xl md:text-6xl font-black leading-tight
-                         bg-gradient-to-r from-cyan-300 via-blue-300 to-indigo-400
-                         bg-clip-text text-transparent">
-            Academic Departments
-          </h1>
+        <p className="max-w-2xl mx-auto text-lg text-gray-700">
+          Engineering excellence built on strong academics, research,
+          and industry-oriented education.
+        </p>
 
-          <p className="mt-6 max-w-2xl text-slate-300 text-lg">
-            Engineering excellence built on strong academics, research and industry focus.
-          </p>
-
-          <div className="flex flex-wrap gap-10 mt-14">
-            <Stat icon={<BookOpen />} value="5" label="Departments" />
-            <Stat icon={<Users />} value="2.6K+" label="Students" />
-            <Stat icon={<GraduationCap />} value="190+" label="Faculty" />
-          </div>
+        <div className="flex flex-wrap justify-center gap-10 mt-14">
+          <Stat icon={<BookOpen />} value="5" label="Departments" />
+          <Stat icon={<Users />} value="2.6K+" label="Students" />
+          <Stat icon={<GraduationCap />} value="190+" label="Faculty" />
         </div>
       </section>
 
       {/* ================= DEPARTMENTS GRID ================= */}
-      <section className="px-6 md:px-20 py-24">
+      <section className="px-6 py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
           {departments.map((dept) => {
             const Icon = dept.icon;
@@ -110,51 +101,46 @@ export default function Departments() {
               <div
                 key={dept.tag}
                 onClick={() => navigate(`/departments/${dept.tag}`)}
-                className="group relative cursor-pointer"
+                className="cursor-pointer group"
               >
-                {/* glow */}
-                <div className="absolute inset-0 bg-gradient-to-br
-                                from-cyan-400/30 to-blue-600/30
-                                opacity-0 group-hover:opacity-100
-                                blur-xl rounded-3xl transition" />
-
-                <div className="relative bg-white/10 backdrop-blur-xl
-                                border border-white/20 rounded-3xl p-8
-                                shadow-lg group-hover:shadow-2xl
-                                transform group-hover:-translate-y-2
-                                transition-all duration-300">
-
-                  <div className="w-16 h-16 mb-6 rounded-2xl
-                                  bg-gradient-to-br from-cyan-400 to-blue-500
-                                  text-[#020617] flex items-center justify-center
-                                  group-hover:scale-110 transition">
+                <div
+                  className="bg-white border border-gray-200 rounded-2xl p-8
+                  shadow-md hover:shadow-xl hover:-translate-y-2
+                  transition-all duration-300"
+                >
+                  <div
+                    className="w-16 h-16 mb-6 rounded-xl
+                    bg-orange-500 text-white
+                    flex items-center justify-center
+                    group-hover:scale-110 transition"
+                  >
                     <Icon size={30} />
                   </div>
 
-                  <h3 className="text-xl font-bold text-white mb-2">
+                  <h3 className="text-xl font-bold mb-2">
                     {dept.title}
                   </h3>
 
-                  <p className="text-slate-300 text-sm mb-6">
+                  <p className="text-gray-600 text-sm mb-6">
                     {dept.desc}
                   </p>
 
                   <div className="grid grid-cols-3 text-center mb-6">
                     <div>
-                      <p className="font-bold text-white">{dept.students}</p>
-                      <p className="text-xs text-slate-400">Students</p>
+                      <p className="font-bold">{dept.students}</p>
+                      <p className="text-xs text-gray-500">Students</p>
                     </div>
                     <div>
-                      <p className="font-bold text-white">{dept.faculty}</p>
-                      <p className="text-xs text-slate-400">Faculty</p>
+                      <p className="font-bold">{dept.faculty}</p>
+                      <p className="text-xs text-gray-500">Faculty</p>
                     </div>
                     <div>
-                      <p className="font-bold text-white">{dept.courses}</p>
-                      <p className="text-xs text-slate-400">Courses</p>
+                      <p className="font-bold">{dept.courses}</p>
+                      <p className="text-xs text-gray-500">Courses</p>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between text-cyan-400 font-semibold">
+                  <div className="flex items-center justify-between font-semibold text-orange-500">
                     <span>Explore Department</span>
                     <ArrowRight
                       size={18}
@@ -168,8 +154,8 @@ export default function Departments() {
         </div>
       </section>
 
-      {/* ================= WHY ================= */}
-      <section className="px-6 md:px-20 py-24 bg-[#020617]">
+      {/* ================= WHY SRIT ================= */}
+      <section className="px-6 py-24">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
           <Highlight icon={<TrendingUp />} title="Industry Ready" />
           <Highlight icon={<Award />} title="Award Winning" />
@@ -187,13 +173,15 @@ export default function Departments() {
 function Stat({ icon, label, value }) {
   return (
     <div className="flex items-center gap-4">
-      <div className="w-14 h-14 rounded-2xl bg-white/10 text-cyan-400
-                      flex items-center justify-center shadow-lg">
+      <div
+        className="w-14 h-14 rounded-xl bg-orange-500 text-white
+        flex items-center justify-center"
+      >
         {icon}
       </div>
       <div>
-        <p className="text-3xl font-bold text-white">{value}</p>
-        <p className="text-sm text-slate-400">{label}</p>
+        <p className="text-3xl font-bold">{value}</p>
+        <p className="text-sm text-gray-600">{label}</p>
       </div>
     </div>
   );
@@ -201,20 +189,18 @@ function Stat({ icon, label, value }) {
 
 function Highlight({ icon, title }) {
   return (
-    <div className="group relative">
-      <div className="absolute inset-0 bg-cyan-500/20 opacity-0
-                      group-hover:opacity-100 blur-xl rounded-2xl transition" />
-      <div className="relative bg-white/10 backdrop-blur-xl
-                      border border-white/20 rounded-2xl p-8 text-center">
-        <div className="w-14 h-14 mx-auto mb-4
-                        bg-gradient-to-br from-cyan-400 to-blue-500
-                        text-[#020617] rounded-xl
-                        flex items-center justify-center
-                        group-hover:scale-110 transition">
-          {icon}
-        </div>
-        <h3 className="font-bold text-white">{title}</h3>
+    <div
+      className="bg-white border border-gray-200 rounded-2xl p-8
+      text-center shadow-md hover:shadow-xl transition"
+    >
+      <div
+        className="w-14 h-14 mx-auto mb-4
+        bg-orange-500 text-white rounded-xl
+        flex items-center justify-center"
+      >
+        {icon}
       </div>
+      <h3 className="font-bold text-lg">{title}</h3>
     </div>
   );
 }
