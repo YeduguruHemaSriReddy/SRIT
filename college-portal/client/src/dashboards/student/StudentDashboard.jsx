@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import supabase from "../../supabaseClient";
+import { motion } from "framer-motion";
 
 export default function StudentDashboard() {
   const [attendance, setAttendance] = useState(0);
@@ -19,7 +20,6 @@ export default function StudentDashboard() {
     } = await supabase.auth.getUser();
     if (!user) return;
 
-    /* ---------- STUDENT ---------- */
     const { data: student } = await supabase
       .from("students")
       .select("id")
@@ -28,7 +28,6 @@ export default function StudentDashboard() {
 
     if (!student) return;
 
-    /* ---------- SUBJECTS ---------- */
     const { data: subs } = await supabase
       .from("student_subjects")
       .select("subject_id")
@@ -36,7 +35,6 @@ export default function StudentDashboard() {
 
     const subjectIds = subs?.map((s) => s.subject_id) || [];
 
-    /* ---------- ATTENDANCE ---------- */
     const { data: attendanceData } = await supabase
       .from("attendance")
       .select("status")
@@ -44,12 +42,9 @@ export default function StudentDashboard() {
 
     if (attendanceData?.length) {
       const present = attendanceData.filter((a) => a.status).length;
-      setAttendance(
-        Math.round((present / attendanceData.length) * 100)
-      );
+      setAttendance(Math.round((present / attendanceData.length) * 100));
     }
 
-    /* ---------- MARKS ---------- */
     const { data: marks } = await supabase
       .from("marks")
       .select("id")
@@ -57,7 +52,6 @@ export default function StudentDashboard() {
 
     setMarksCount(marks?.length || 0);
 
-    /* ---------- MATERIALS ---------- */
     if (subjectIds.length > 0) {
       const { data: mats } = await supabase
         .from("materials")
@@ -67,7 +61,6 @@ export default function StudentDashboard() {
       setMaterialsCount(mats?.length || 0);
     }
 
-    /* ---------- FEES ---------- */
     const { data: fees } = await supabase
       .from("fees")
       .select("status")
@@ -76,7 +69,6 @@ export default function StudentDashboard() {
 
     if (fees?.status) setFeesStatus(fees.status);
 
-    /* ---------- TODAY CLASSES ---------- */
     const today = new Date().toLocaleDateString("en-US", {
       weekday: "long",
     });
@@ -89,79 +81,113 @@ export default function StudentDashboard() {
 
     setTodayClasses(timetable || []);
 
-    /* ---------- NOTICES ---------- */
     const { data: noticesData } = await supabase
       .from("notices")
-      .select("title, created_at")
+      .select("title")
       .order("created_at", { ascending: false })
       .limit(3);
 
     setNotices(noticesData || []);
   };
 
-  const attendanceColor =
-    attendance >= 75
-      ? "bg-green-100 text-green-700"
-      : attendance >= 65
-      ? "bg-orange-100 text-orange-700"
-      : "bg-red-100 text-red-700";
-
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">
-        Student Dashboard
-      </h1>
+    <div className="min-h-screen p-8 bg-gradient-to-br from-slate-100 via-slate-200 to-slate-300">
 
-      {/* ===== STATS ===== */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card title="Attendance" value={`${attendance}%`} color={attendanceColor} />
-        <Card title="Marks" value={marksCount > 0 ? "Published" : "Not Published"} />
-        <Card title="Materials" value={materialsCount} />
-        <Card title="Fees" value={feesStatus} />
+      {/* TITLE */}
+      <motion.h1
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="text-2xl font-bold text-slate-800 mb-8"
+      >
+        Student Dashboard
+      </motion.h1>
+
+      {/* STATS */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+        <StatCard
+          title="Attendance"
+          value={`${attendance}%`}
+          accent={
+            attendance >= 75
+              ? "from-emerald-400 to-emerald-500"
+              : attendance >= 65
+              ? "from-amber-400 to-orange-400"
+              : "from-rose-400 to-red-500"
+          }
+        />
+        <StatCard
+          title="Marks"
+          value={marksCount > 0 ? "Published" : "Not Published"}
+          accent="from-indigo-400 to-indigo-500"
+        />
+        <StatCard
+          title="Materials"
+          value={materialsCount}
+          accent="from-sky-400 to-sky-500"
+        />
+        <StatCard
+          title="Fees"
+          value={feesStatus}
+          accent="from-violet-400 to-purple-500"
+        />
       </div>
 
-      {/* ===== TODAY CLASSES ===== */}
-      <Section title="Today's Classes">
-        {todayClasses.length === 0 ? (
-          <p className="text-gray-500">No classes today</p>
-        ) : (
-          todayClasses.map((c, i) => (
-            <p key={i}>
-              Period {c.period} – {c.subjects.name}
-            </p>
-          ))
-        )}
-      </Section>
+      {/* CONTENT */}
+      <div className="grid md:grid-cols-2 gap-6">
+        <GlassSection title="Today's Classes">
+          {todayClasses.length === 0 ? (
+            <p className="text-slate-500">No classes today</p>
+          ) : (
+            todayClasses.map((c, i) => (
+              <p key={i} className="text-slate-700">
+                Period {c.period} – {c.subjects.name}
+              </p>
+            ))
+          )}
+        </GlassSection>
 
-      {/* ===== NOTICES ===== */}
-      <Section title="Recent Notices">
-        {notices.length === 0 ? (
-          <p className="text-gray-500">No notices</p>
-        ) : (
-          notices.map((n, i) => (
-            <p key={i}>{n.title}</p>
-          ))
-        )}
-      </Section>
+        <GlassSection title="Recent Notices">
+          {notices.length === 0 ? (
+            <p className="text-slate-500">No notices</p>
+          ) : (
+            notices.map((n, i) => (
+              <p key={i} className="text-slate-700">
+                • {n.title}
+              </p>
+            ))
+          )}
+        </GlassSection>
+      </div>
     </div>
   );
 }
 
-/* ---------- SMALL COMPONENTS ---------- */
-function Card({ title, value, color = "bg-gray-100" }) {
+/* COMPONENTS */
+
+function StatCard({ title, value, accent }) {
   return (
-    <div className={`p-4 rounded ${color}`}>
-      <p className="text-sm">{title}</p>
-      <p className="text-xl font-bold">{value}</p>
-    </div>
+    <motion.div
+      whileHover={{ y: -4 }}
+      className="bg-white/80 backdrop-blur-xl border border-white/40
+      rounded-2xl p-5 shadow-md"
+    >
+      <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${accent} mb-3`} />
+      <p className="text-sm text-slate-500">{title}</p>
+      <p className="text-2xl font-bold text-slate-800">{value}</p>
+    </motion.div>
   );
 }
 
-function Section({ title, children }) {
+function GlassSection({ title, children }) {
   return (
-    <div className="bg-white p-4 rounded shadow">
-      <h2 className="font-semibold mb-2">{title}</h2>
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white/80 backdrop-blur-xl border border-white/40
+      rounded-2xl p-6 shadow-md"
+    >
+      <h2 className="font-semibold text-slate-800 mb-3">{title}</h2>
       {children}
-    </div>
+    </motion.div>
   );
 }

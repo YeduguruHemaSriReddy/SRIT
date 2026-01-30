@@ -7,15 +7,17 @@ import {
   Award,
   GraduationCap,
   Star,
+  Sparkles,
+  ArrowRight,
 } from "lucide-react";
 import { Button } from "../components/ui/button";
 
 export default function Placements() {
   const stats = [
-    { icon: Users, value: "850+", label: "Students Placed", color: "from-blue-200 to-blue-300" },
-    { icon: Building, value: "120+", label: "Recruiting Companies", color: "from-emerald-200 to-teal-300" },
-    { icon: TrendingUp, value: "12 LPA", label: "Highest Package", color: "from-blue-200 to-blue-300" },
-    { icon: Award, value: "4.5 LPA", label: "Average Package", color: "from-purple-200 to-pink-300" },
+    { icon: Users, value: "850+", label: "Students Placed" },
+    { icon: Building, value: "120+", label: "Recruiting Companies" },
+    { icon: TrendingUp, value: "12 LPA", label: "Highest Package" },
+    { icon: Award, value: "4.5 LPA", label: "Average Package" },
   ];
 
   const branches = [
@@ -27,9 +29,9 @@ export default function Placements() {
   ];
 
   const recruiters = [
-    "TCS", "Infosys", "Wipro", "Accenture", "Cognizant",
-    "Capgemini", "Tech Mahindra", "Amazon", "Deloitte",
-    "IBM", "HCL", "Oracle",
+    "TCS","Infosys","Wipro","Accenture","Cognizant",
+    "Capgemini","Tech Mahindra","Amazon","Deloitte",
+    "IBM","HCL","Oracle",
   ];
 
   const features = [
@@ -42,40 +44,63 @@ export default function Placements() {
   ];
 
   return (
-    <div className="min-h-screen bg-blue-50">
+    <div className="min-h-screen font-sans bg-gradient-to-br from-[#020617] via-[#0B1F3A] to-[#164E63] text-[#F8FAFC]">
 
       {/* ================= HERO ================= */}
-      <section className="pt-36 pb-28 text-center">
-        <motion.h1
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-5xl md:text-6xl font-extrabold mb-6 text-slate-900"
-        >
-          Career Opportunities at <span className="text-orange-500">SRIT</span>
-        </motion.h1>
-        <p className="text-xl text-gray-700 max-w-4xl mx-auto">
-          Our Training & Placement Cell ensures students are industry-ready
-          through continuous skill development, internships, and top-company
-          recruitment drives.
-        </p>
+      <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#22D3EE55,transparent_65%)]" />
+
+        <div className="relative z-10 text-center px-6">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="inline-flex items-center gap-2 px-6 py-2
+            bg-white/10 backdrop-blur-xl text-[#FBBF24]
+            rounded-full text-sm font-extrabold uppercase mb-6
+            border border-white/20 shadow-[0_0_30px_#22D3EE66]"
+          >
+            <Sparkles size={16} /> Placements @ SRIT
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-5xl md:text-7xl font-black mb-6
+            bg-gradient-to-r from-[#FBBF24] via-[#67E8F9] to-[#22D3EE]
+            bg-clip-text text-transparent drop-shadow-2xl"
+          >
+            Careers that <br /> Shape the Future
+          </motion.h1>
+
+          <p className="text-lg md:text-xl max-w-3xl mx-auto text-[#E0F2FE]">
+            Our Training & Placement Cell ensures students are industry-ready with
+            continuous skill development and top-company recruitment drives.
+          </p>
+        </div>
       </section>
 
       {/* ================= STATS ================= */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 lg:grid-cols-4 gap-10">
+      <section className="-mt-24 container mx-auto px-6 relative z-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6
+          bg-white/10 backdrop-blur-2xl p-10 rounded-3xl
+          border border-white/20 shadow-[0_0_60px_#22D3EE55]">
           {stats.map((item, i) => {
             const Icon = item.icon;
             return (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className={`rounded-3xl p-8 text-slate-900 shadow-lg bg-gradient-to-br ${item.color} hover:from-indigo-500 hover:to-indigo-700 transition-colors`}
+                whileHover={{ y: -10 }}
+                className="text-center"
               >
-                <Icon className="w-10 h-10 mb-4" />
-                <h3 className="text-4xl font-extrabold">{item.value}</h3>
-                <p className="opacity-90 mt-2">{item.label}</p>
+                <div className="w-14 h-14 mx-auto mb-3 rounded-full
+                  bg-gradient-to-br from-[#FBBF24] to-[#22D3EE]
+                  flex items-center justify-center text-black shadow-lg">
+                  <Icon />
+                </div>
+                <h3 className="text-3xl font-black text-[#FBBF24]">{item.value}</h3>
+                <p className="text-sm text-[#CBD5F5] uppercase font-semibold">
+                  {item.label}
+                </p>
               </motion.div>
             );
           })}
@@ -83,9 +108,11 @@ export default function Placements() {
       </section>
 
       {/* ================= BRANCH WISE ================= */}
-      <section className="py-24 text-slate-900">
+      <section className="py-32">
         <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center mb-16">
+          <h2 className="text-4xl font-black text-center mb-16
+            bg-gradient-to-r from-[#FBBF24] to-[#22D3EE]
+            bg-clip-text text-transparent">
             Branch-Wise Placement Performance
           </h2>
 
@@ -93,15 +120,19 @@ export default function Placements() {
             {branches.map((b, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                className="bg-blue-100 p-8 rounded-2xl shadow-md text-center hover:bg-indigo-600 hover:text-white transition-colors"
+                whileHover={{ y: -12, scale: 1.05 }}
+                className="p-8 rounded-3xl text-center
+                bg-white/10 backdrop-blur-2xl
+                border border-white/20
+                shadow-[0_0_40px_#22D3EE55]
+                hover:shadow-[0_0_80px_#FBBF24AA] transition"
               >
-                <GraduationCap className="w-10 h-10 mx-auto mb-4 text-orange-500" />
+                <GraduationCap className="w-10 h-10 mx-auto mb-4 text-[#FBBF24]" />
                 <h3 className="text-xl font-bold">{b.name}</h3>
-                <p className="text-3xl font-extrabold mt-3">{b.rate}</p>
-                <p className="opacity-80 mt-1">Placement Rate</p>
+                <p className="text-4xl font-black mt-4 text-[#67E8F9]">
+                  {b.rate}
+                </p>
+                <p className="text-sm text-[#CBD5F5] mt-1">Placement Rate</p>
               </motion.div>
             ))}
           </div>
@@ -109,9 +140,11 @@ export default function Placements() {
       </section>
 
       {/* ================= TRAINING ================= */}
-      <section className="py-24">
+      <section className="py-32 bg-gradient-to-br from-[#020617] to-[#0B1F3A]">
         <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center mb-14 text-slate-900">
+          <h2 className="text-4xl font-black text-center mb-16
+            bg-gradient-to-r from-[#FBBF24] to-[#22D3EE]
+            bg-clip-text text-transparent">
             Training & Career Development
           </h2>
 
@@ -119,13 +152,16 @@ export default function Placements() {
             {features.map((f, i) => (
               <motion.div
                 key={i}
-                initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                className="flex items-start gap-4 bg-blue-100 p-6 rounded-2xl shadow-md hover:bg-indigo-600 hover:text-white transition-colors"
+                whileHover={{ x: 10 }}
+                className="flex gap-4 items-center
+                bg-white/10 backdrop-blur-xl
+                p-6 rounded-2xl
+                border border-white/20
+                shadow-[0_0_30px_#22D3EE44]
+                hover:shadow-[0_0_60px_#FBBF24AA] transition"
               >
-                <Star className="w-7 h-7 text-orange-500 mt-1" />
-                <p className="font-medium">{f}</p>
+                <Star className="w-6 h-6 text-[#FBBF24]" />
+                <p className="font-medium text-[#E5E7EB]">{f}</p>
               </motion.div>
             ))}
           </div>
@@ -133,46 +169,55 @@ export default function Placements() {
       </section>
 
       {/* ================= RECRUITERS ================= */}
-      <section className="py-24 text-center">
-        <div className="max-w-6xl mx-auto px-6">
-          <h2 className="text-4xl font-bold mb-6 text-slate-900">
-            Top Recruiters
-          </h2>
-          <p className="text-gray-700 mb-12">
-            Leading companies regularly recruit SRIT graduates
-          </p>
+      <section className="py-32 text-center">
+        <h2 className="text-4xl font-black mb-12
+          bg-gradient-to-r from-[#FBBF24] to-[#22D3EE]
+          bg-clip-text text-transparent">
+          Top Recruiters
+        </h2>
 
-          <div className="flex flex-wrap justify-center gap-4">
-            {recruiters.map((r, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                className="px-6 py-3 rounded-full bg-blue-100 shadow-md font-semibold text-slate-900 hover:bg-indigo-600 hover:text-white transition-colors"
-              >
-                {r}
-              </motion.div>
-            ))}
-          </div>
+        <div className="flex flex-wrap justify-center gap-4 px-6">
+          {recruiters.map((r, i) => (
+            <motion.div
+              key={i}
+              whileHover={{ scale: 1.15 }}
+              className="px-6 py-3 rounded-full
+              bg-white/10 backdrop-blur-xl
+              border border-white/20
+              shadow-[0_0_25px_#22D3EE55]
+              hover:shadow-[0_0_50px_#FBBF24AA]
+              font-semibold transition"
+            >
+              {r}
+            </motion.div>
+          ))}
         </div>
       </section>
 
       {/* ================= CTA ================= */}
-      <section className="py-28 text-center">
-        <div className="max-w-3xl mx-auto px-6">
-          <h2 className="text-4xl md:text-5xl font-extrabold mb-6 text-slate-900">
-            Transforming Students into Professionals
-          </h2>
-          <p className="text-lg max-w-3xl mx-auto mb-10 text-slate-700">
-            SRIT’s placement ecosystem is designed to ensure every student gets
-            the opportunity to succeed in their chosen career path.
-          </p>
+      <section className="py-28 text-center bg-gradient-to-br from-[#020617] to-[#0B1F3A]">
+        <h2 className="text-4xl md:text-5xl font-black mb-6
+          bg-gradient-to-r from-[#FBBF24] to-[#22D3EE]
+          bg-clip-text text-transparent">
+          Transforming Students into Professionals
+        </h2>
 
-          <Button size="lg" variant="secondary" className="px-12 py-6 text-lg bg-blue-100 hover:bg-indigo-600 hover:text-white transition-colors">
-            Contact Placement Cell
+        <p className="text-lg mb-10 text-[#CBD5F5]">
+          SRIT’s placement ecosystem ensures real-world exposure for every student.
+        </p>
+
+        <a href="tel:+919876543210">
+          <Button
+            size="lg"
+            className="px-14 py-6 text-lg font-black text-black
+            bg-gradient-to-r from-[#FBBF24] to-[#22D3EE]
+            shadow-[0_0_40px_#22D3EEAA]
+            hover:shadow-[0_0_80px_#FBBF24AA]
+            hover:scale-105 transition"
+          >
+            Contact Placement Cell <ArrowRight className="ml-2" />
           </Button>
-        </div>
+        </a>
       </section>
 
       <Footer />

@@ -1,118 +1,140 @@
 import Footer from "../components/Footer";
-import { Cpu, Zap, Settings, PenTool, Radio, Code2, ArrowRight } from "lucide-react";
+import {
+  Cpu,
+  Zap,
+  Settings,
+  PenTool,
+  Radio,
+  Code2,
+  ArrowRight,
+  Sparkles,
+} from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function Departments() {
   const departments = [
     {
-      id: "cse",
-      name: "Computer Science",
+      name: "Computer Science & Engineering",
       abbr: "CSE",
-      desc: "Exploring the frontiers of computing, AI, and software engineering.",
+      desc: "AI, data science, software engineering and modern computing systems.",
       icon: Code2,
-      color: "blue"
     },
     {
-      id: "ece",
-      name: "Electronics & Comm.",
+      name: "Electronics & Communication",
       abbr: "ECE",
-      desc: "Bridging the gap between hardware and communication systems.",
+      desc: "Communication systems, VLSI, embedded and signal processing.",
       icon: Radio,
-      color: "indigo"
     },
     {
-      id: "eee",
       name: "Electrical & Electronics",
       abbr: "EEE",
-      desc: "Powering the future with sustainable energy solutions.",
+      desc: "Power systems, renewable energy and smart grids.",
       icon: Zap,
-      color: "yellow"
     },
     {
-      id: "me",
       name: "Mechanical Engineering",
       abbr: "ME",
-      desc: "Designing and manufacturing the machines of tomorrow.",
+      desc: "Design, manufacturing and thermal engineering.",
       icon: Settings,
-      color: "orange"
     },
     {
-      id: "ce",
       name: "Civil Engineering",
       abbr: "CE",
-      desc: "Building the infrastructure for a sustainable world.",
+      desc: "Infrastructure, construction and sustainability.",
       icon: PenTool,
-      color: "green"
     },
     {
-      id: "ai",
       name: "Artificial Intelligence",
       abbr: "CSM",
-      desc: "Creating intelligent systems for complex problem solving.",
+      desc: "Machine learning, deep learning and intelligent systems.",
       icon: Cpu,
-      color: "purple"
-    }
+    },
   ];
 
-  const getColorClass = (color) => {
-    const map = {
-      blue: "text-blue-600 bg-blue-100 group-hover:bg-indigo-600 group-hover:text-white",
-      indigo: "text-indigo-600 bg-indigo-100 group-hover:bg-indigo-600 group-hover:text-white",
-      yellow: "text-yellow-600 bg-yellow-100 group-hover:bg-indigo-600 group-hover:text-white",
-      orange: "text-orange-600 bg-orange-100 group-hover:bg-indigo-600 group-hover:text-white",
-      green: "text-green-600 bg-green-100 group-hover:bg-indigo-600 group-hover:text-white",
-      purple: "text-purple-600 bg-purple-100 group-hover:bg-indigo-600 group-hover:text-white",
-    };
-    return map[color] || map.blue;
-  };
-
   return (
-    <div className="min-h-screen bg-blue-50 font-sans">
+    <div className="min-h-screen font-sans bg-gradient-to-br from-[#020617] via-[#0B1F3A] to-[#164E63] text-[#F8FAFC]">
 
-      {/* Hero */}
-      <section className="bg-blue-50 py-20 text-center">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h1 className="text-5xl font-bold text-slate-900 mb-6">
-            Academic <span className="text-orange-500">Departments</span>
-          </h1>
-          <p className="text-xl text-slate-600 max-w-2xl mx-auto">
-            Our departments are centers of excellence, fostering innovation and providing rigorous academic training.
+      {/* ================= HERO ================= */}
+      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#22D3EE55,transparent_65%)]"></div>
+
+        <div className="relative z-10 text-center px-6">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="inline-flex items-center gap-2 px-6 py-2 
+            bg-white/10 backdrop-blur-xl text-[#FBBF24]
+            rounded-full text-sm font-extrabold uppercase mb-6
+            border border-white/20 shadow-[0_0_30px_#22D3EE66]"
+          >
+            <Sparkles className="w-4 h-4" /> Our Academic Strength
+          </motion.div>
+
+          <motion.h1
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-5xl md:text-7xl font-black mb-6
+            bg-gradient-to-r from-[#FBBF24] via-[#67E8F9] to-[#22D3EE]
+            bg-clip-text text-transparent drop-shadow-2xl"
+          >
+            Academic Departments
+          </motion.h1>
+
+          <p className="text-lg md:text-xl max-w-3xl mx-auto text-[#E0F2FE]">
+            SRIT departments blend strong academics, innovation, and industry-ready skills.
           </p>
         </div>
       </section>
 
-      {/* Departments Grid */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      {/* ================= DEPARTMENTS GRID ================= */}
+      <section className="py-32">
+        <div className="container mx-auto px-6 grid md:grid-cols-2 lg:grid-cols-3 gap-10">
           {departments.map((dept, i) => {
             const Icon = dept.icon;
             return (
               <motion.div
-                key={dept.id}
-                initial={{ opacity: 0, y: 20 }}
+                key={i}
+                initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className={`rounded-2xl p-8 shadow-lg border border-slate-100 group cursor-pointer bg-white ${getColorClass(dept.color)} hover:shadow-2xl transition-all`}
+                whileHover={{ y: -14, scale: 1.02 }}
+                transition={{ delay: i * 0.08 }}
+                className="relative group p-8 rounded-3xl
+                bg-white/10 backdrop-blur-2xl
+                border border-white/20
+                shadow-[0_0_40px_#22D3EE55]
+                hover:shadow-[0_0_90px_#FBBF24AA]
+                transition overflow-hidden"
               >
-                <div className="flex justify-between items-start mb-6">
-                  <div className={`p-4 rounded-xl ${getColorClass(dept.color)} transition-colors`}>
-                    <Icon className="h-8 w-8" />
+                {/* glow */}
+                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition
+                  bg-[radial-gradient(circle_at_top,#FBBF2440,transparent_70%)]" />
+
+                <div className="relative z-10">
+                  <div className="w-14 h-14 mb-6 rounded-xl
+                    bg-gradient-to-br from-[#FBBF24] to-[#22D3EE]
+                    flex items-center justify-center text-black shadow-lg">
+                    <Icon size={28} />
                   </div>
-                  <span className="text-4xl font-black text-slate-100 group-hover:text-white transition-colors">
-                    {dept.abbr}
-                  </span>
-                </div>
-                
-                <h3 className="text-2xl font-bold mb-3 text-slate-900 group-hover:text-white transition-colors">
-                  {dept.name}
-                </h3>
-                <p className="text-slate-600 mb-6 group-hover:text-white/90 transition-colors">
-                  {dept.desc}
-                </p>
-                
-                <div className="flex items-center text-blue-600 font-semibold group-hover:text-white transition-colors">
-                  Explore Department <ArrowRight className="ml-2 h-4 w-4" />
+
+                  <h3 className="text-2xl font-black mb-2 text-[#FBBF24]">
+                    {dept.name}
+                  </h3>
+
+                  <p className="text-[#CBD5F5] mb-6 leading-relaxed">
+                    {dept.desc}
+                  </p>
+
+                  <div className="flex justify-between items-center">
+                    <span className="text-4xl font-black text-white/10">
+                      {dept.abbr}
+                    </span>
+
+                    <span className="flex items-center gap-2 font-semibold
+                      text-[#67E8F9]">
+                      Explore <ArrowRight size={16} />
+                    </span>
+                  </div>
                 </div>
               </motion.div>
             );
@@ -120,20 +142,36 @@ export default function Departments() {
         </div>
       </section>
 
-      {/* Why Choose SRIT */}
-      <section className="py-20 bg-blue-50 text-center">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold mb-8 text-slate-900">Why Choose SRIT?</h2>
+      {/* ================= WHY SRIT ================= */}
+      <section className="py-32 bg-gradient-to-br from-[#020617] to-[#0B1F3A]">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <h2 className="text-4xl font-black mb-16
+            bg-gradient-to-r from-[#FBBF24] to-[#22D3EE]
+            bg-clip-text text-transparent">
+            Why SRIT Departments Stand Out
+          </h2>
+
           <div className="grid md:grid-cols-3 gap-8">
             {[
-              { title: "Expert Faculty", desc: "Learn from Ph.D. holders and industry veterans." },
-              { title: "Modern Labs", desc: "Hands-on experience with cutting-edge equipment." },
-              { title: "Industry Ties", desc: "Strong partnerships for internships and placements." },
-            ].map((feature, i) => (
-              <div key={i} className="bg-white/10 backdrop-blur-sm p-6 rounded-xl border border-white/10 hover:bg-indigo-600 hover:text-white transition-colors">
-                <h3 className="text-xl font-bold mb-3 text-orange-400 group-hover:text-white">{feature.title}</h3>
-                <p className="text-blue-100 group-hover:text-white">{feature.desc}</p>
-              </div>
+              "Expert Faculty & Mentorship",
+              "Advanced Labs & Research",
+              "Strong Industry Connectivity",
+            ].map((text, i) => (
+              <motion.div
+                key={i}
+                whileHover={{ y: -10 }}
+                className="bg-white/10 backdrop-blur-xl
+                border border-white/20
+                rounded-2xl p-8
+                shadow-[0_0_40px_#22D3EE55]"
+              >
+                <h3 className="text-xl font-bold text-[#FBBF24] mb-2">
+                  {text}
+                </h3>
+                <p className="text-[#CBD5F5]">
+                  Designed to prepare students for real-world engineering challenges.
+                </p>
+              </motion.div>
             ))}
           </div>
         </div>

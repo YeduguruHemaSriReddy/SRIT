@@ -8,7 +8,7 @@ export default function Navigation() {
 
   const navLinks = [
     { name: "Home", path: "/" },
-    { name: "About Us", path: "/about" },
+    { name: "About", path: "/about" },
     { name: "Admissions", path: "/admissions" },
     { name: "Departments", path: "/departments" },
     { name: "Campus Life", path: "/campus-life" },
@@ -17,63 +17,71 @@ export default function Navigation() {
   ];
 
   return (
-    <header className="fixed top-0 w-full z-40 pointer-events-auto">
+    <header className="fixed top-0 w-full z-50">
 
-      {/* ================= TOP CONTACT STRIP ================= */}
-      <div className="bg-orange-600 text-white text-xs">
-        <div className="max-w-7xl mx-auto px-4 py-2 flex justify-between">
+      {/* TOP STRIP */}
+      <div className="w-full bg-gradient-to-r from-[#020617] via-[#0B1F3A] to-[#164E63]
+        text-xs text-[#E0F2FE] border-b border-white/10">
+        <div className="w-full px-6 py-2 flex justify-between">
           <div className="flex gap-4">
-            <span>📞 91-951-561-1111</span>
-            <span>✉️ hr@srit.ac.in</span>
+            <span>📞 <span className="text-[#67E8F9]">+91 95156 11111</span></span>
+            <span>✉️ <span className="text-[#67E8F9]">hr@srit.ac.in</span></span>
           </div>
-          {/* <div className="flex gap-4">
-            <span>Faculty Login</span>
-            <span>Student Login</span>
-          </div> */}
+          <span className="text-[#FBBF24] font-semibold tracking-wide">
+            Autonomous Institution
+          </span>
         </div>
       </div>
 
-      {/* ================= SRIT LOGO BANNER ================= */}
-      <div
-        className="w-full h-[140px] bg-no-repeat bg-center bg-contain border-b"
-        style={{
-          backgroundImage: `url(${logo})`,
-        }}
-      />
+      {/* LOGO */}
+      <div className="w-full bg-white border-b">
+        <div
+          className="h-[120px] bg-no-repeat bg-center bg-contain"
+          style={{ backgroundImage: `url(${logo})` }}
+        />
+      </div>
 
-      {/* ================= NAVIGATION BAR ================= */}
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-between items-center py-3">
+      {/* NAV BAR */}
+      <nav className="w-full bg-[#020617]/80 backdrop-blur-xl border-b border-white/10">
+        <div className="w-full px-6">
+          <div className="flex justify-between items-center py-4">
 
-            {/* DESKTOP MENU */}
-            <div className="hidden lg:flex gap-6 text-sm font-semibold text-gray-700">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.path}
-                  className={`hover:text-orange-600 transition ${
-                    location.pathname === link.path
-                      ? "text-orange-600 border-b-2 border-orange-600 pb-1"
-                      : ""
-                  }`}
-                >
-                  {link.name}
-                </Link>
-              ))}
+            {/* DESKTOP NAV */}
+            <div className="hidden lg:flex gap-3">
+              {navLinks.map((link) => {
+                const active = location.pathname === link.path;
+                return (
+                  <Link
+                    key={link.name}
+                    to={link.path}
+                    className={`
+                      px-5 py-2 rounded-full text-sm font-semibold transition-all
+                      backdrop-blur-xl border
+                      ${active
+                        ? "bg-gradient-to-r from-[#FBBF24] to-[#22D3EE] text-black shadow-[0_0_25px_#22D3EEAA]"
+                        : "bg-white/10 text-[#E5E7EB] border-white/20 hover:bg-white/20 hover:shadow-[0_0_20px_#22D3EE66]"
+                      }
+                    `}
+                  >
+                    {link.name}
+                  </Link>
+                );
+              })}
             </div>
 
-            {/* LOGIN BUTTON */}
+            {/* LOGIN */}
             <Link
               to="/login"
-              className="hidden lg:block px-5 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition text-sm"
+              className="hidden lg:block px-6 py-2 rounded-full font-bold text-black
+              bg-gradient-to-r from-[#FBBF24] to-[#22D3EE]
+              shadow-[0_0_25px_#22D3EEAA] hover:shadow-[0_0_40px_#FBBF24AA] transition"
             >
               Login
             </Link>
 
-            {/* MOBILE MENU BUTTON */}
+            {/* MOBILE MENU */}
             <button
-              className="lg:hidden text-2xl"
+              className="lg:hidden text-3xl text-[#67E8F9]"
               onClick={() => setIsOpen(!isOpen)}
             >
               ☰
@@ -81,16 +89,17 @@ export default function Navigation() {
           </div>
         </div>
 
-        {/* ================= MOBILE MENU ================= */}
+        {/* MOBILE NAV */}
         {isOpen && (
-          <div className="lg:hidden border-t bg-white">
-            <div className="flex flex-col px-4 py-4 gap-3 text-sm font-medium">
+          <div className="lg:hidden bg-[#020617]/95 backdrop-blur-xl border-t border-white/10">
+            <div className="flex flex-col gap-3 px-6 py-6">
               {navLinks.map((link) => (
                 <Link
                   key={link.name}
                   to={link.path}
                   onClick={() => setIsOpen(false)}
-                  className="hover:text-orange-600"
+                  className="px-5 py-3 rounded-full bg-white/10 text-[#E5E7EB]
+                  border border-white/20 hover:bg-white/20 transition"
                 >
                   {link.name}
                 </Link>
@@ -99,7 +108,8 @@ export default function Navigation() {
               <Link
                 to="/login"
                 onClick={() => setIsOpen(false)}
-                className="mt-2 text-center bg-orange-600 text-white py-2 rounded"
+                className="mt-4 text-center px-5 py-3 rounded-full font-bold text-black
+                bg-gradient-to-r from-[#FBBF24] to-[#22D3EE]"
               >
                 Login
               </Link>

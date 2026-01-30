@@ -1,13 +1,16 @@
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { 
-  Users, 
-  Trophy, 
-  BookOpen, 
-  Microscope, 
-  Coffee, 
+import {
+  Users,
+  Trophy,
+  BookOpen,
+  Microscope,
+  Coffee,
   Music,
   Zap,
-  Gamepad2
+  Gamepad2,
+  Sparkles,
+  ArrowRight,
 } from "lucide-react";
 import Footer from "../components/Footer";
 
@@ -17,63 +20,42 @@ const campusLife = [
     desc: "State-of-the-art labs where theory meets reality. Our research cells are the birthplace of next-gen ideas.",
     img: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=2070&auto=format&fit=crop",
     icon: Microscope,
-    tag: "Research"
+    tag: "Research",
   },
   {
     title: "The Knowledge Hub",
-    desc: "A massive central library with thousands of journals and digital access to global research papers.",
+    desc: "A massive central library with thousands of journals and global digital research access.",
     img: "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?q=80&w=2070&auto=format&fit=crop",
     icon: BookOpen,
-    tag: "Academic"
+    tag: "Academic",
   },
   {
     title: "Arena of Champions",
-    desc: "From professional cricket grounds to indoor badminton courts, we prioritize physical excellence.",
+    desc: "Professional sports grounds and indoor courts that build champions.",
     img: "https://images.unsplash.com/photo-1526676023131-d35216858f0a?q=80&w=2070&auto=format&fit=crop",
     icon: Trophy,
-    tag: "Sports"
+    tag: "Sports",
   },
   {
     title: "Creative Pulse",
-    desc: "Annual fests, music nights, and drama workshops that keep the campus spirit alive and thriving.",
+    desc: "Music nights, cultural fests, drama and art workshops.",
     img: "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?q=80&w=2070&auto=format&fit=crop",
     icon: Music,
-    tag: "Cultural"
+    tag: "Cultural",
   },
   {
     title: "Tech Society",
-    desc: "Student-run coding clubs and robotics teams that compete and win at national level hackathons.",
+    desc: "Student coding clubs, robotics teams and national hackathon wins.",
     img: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?q=80&w=2070&auto=format&fit=crop",
     icon: Zap,
-    tag: "Technology"
+    tag: "Technology",
   },
   {
     title: "Social Lounge",
-    desc: "A vibrant cafeteria serving hygienic, diverse cuisines – the favorite hangout for brainstorming.",
+    desc: "A vibrant cafeteria and social spaces for collaboration.",
     img: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?q=80&w=2047&auto=format&fit=crop",
     icon: Coffee,
-    tag: "Lifestyle"
-  },
-];
-
-const testimonials = [
-  {
-    name: "Arjun Varma",
-    role: "B.Tech CSE, 4th Year",
-    text: "The tech clubs at SRIT changed my perspective on engineering. I'm not just learning to code; I'm learning to build products that matter.",
-    img: "https://i.pravatar.cc/150?u=arjun",
-  },
-  {
-    name: "Priya Reddy",
-    role: "B.Tech EEE, Alumna",
-    text: "Campus life here is a perfect balance. One day you're in a high-tech lab, and the next you're performing on stage at the annual fest.",
-    img: "https://i.pravatar.cc/150?u=priya",
-  },
-  {
-    name: "Karthik S.",
-    role: "B.Tech Mech, 3rd Year",
-    text: "The sports facilities are top-notch. Representing SRIT in the inter-college cricket tournament was a highlight of my college life.",
-    img: "https://i.pravatar.cc/150?u=karthik",
+    tag: "Lifestyle",
   },
 ];
 
@@ -85,107 +67,138 @@ const stats = [
 ];
 
 export default function CampusLife() {
-  const fadeInUp = {
-    initial: { opacity: 0, y: 30 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true },
-    transition: { duration: 0.6 }
-  };
+  const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-blue-50 text-slate-900">
+    <div className="min-h-screen font-sans bg-gradient-to-br from-[#020617] via-[#0B1F3A] to-[#164E63] text-[#F8FAFC]">
 
-      {/* HERO */}
-      <section className="relative h-[60vh] flex items-center justify-center bg-blue-100">
-        <div className="absolute inset-0 opacity-30">
-          <img 
-            src="https://images.unsplash.com/photo-1541339907198-e08756ebafe3?q=80&w=2070&auto=format&fit=crop" 
-            className="w-full h-full object-cover" 
-            alt="Campus"
-          />
-        </div>
+      {/* ================= HERO ================= */}
+      <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,#22D3EE55,transparent_65%)]" />
 
         <div className="relative z-10 text-center px-6">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="inline-flex items-center gap-2 px-6 py-2 
+            bg-white/10 backdrop-blur-xl text-[#FBBF24]
+            rounded-full text-sm font-extrabold uppercase mb-6
+            border border-white/20 shadow-[0_0_30px_#22D3EE66]"
+          >
+            <Sparkles size={16} /> Life @ SRIT
+          </motion.div>
+
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-5xl md:text-7xl font-black text-orange-600 mb-6"
+            className="text-5xl md:text-7xl font-black mb-6
+            bg-gradient-to-r from-[#FBBF24] via-[#67E8F9] to-[#22D3EE]
+            bg-clip-text text-transparent drop-shadow-2xl"
           >
             Campus Life
           </motion.h1>
 
-          <p className="text-xl max-w-2xl mx-auto text-slate-700">
-            Where academic excellence meets vibrant culture and lifelong memories.
+          <p className="text-lg md:text-xl max-w-3xl mx-auto text-[#E0F2FE]">
+            A perfect balance of academics, innovation, culture and unforgettable memories.
           </p>
         </div>
       </section>
 
-      {/* STATS */}
-      <section className="py-12 bg-white">
-        <div className="container mx-auto px-6 grid grid-cols-2 md:grid-cols-4 gap-8">
-          {stats.map((stat, i) => (
-            <div key={i} className="text-center">
-              <div className="text-4xl font-black text-orange-600">{stat.value}</div>
-              <div className="text-sm font-bold uppercase text-slate-700">
-                {stat.title}
+      {/* ================= STATS ================= */}
+      <section className="-mt-24 container mx-auto px-6 relative z-10">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6
+          bg-white/10 backdrop-blur-2xl
+          p-10 rounded-3xl
+          border border-white/20
+          shadow-[0_0_60px_#22D3EE55]">
+          {stats.map((stat, i) => {
+            const Icon = stat.icon;
+            return (
+              <div key={i} className="text-center">
+                <div className="w-14 h-14 mx-auto mb-3 rounded-full
+                  bg-gradient-to-br from-[#FBBF24] to-[#22D3EE]
+                  flex items-center justify-center text-black shadow-lg">
+                  <Icon />
+                </div>
+                <h3 className="text-3xl font-black text-[#FBBF24]">{stat.value}</h3>
+                <p className="text-sm text-[#CBD5F5] uppercase font-semibold">
+                  {stat.title}
+                </p>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 
-      {/* FEATURES */}
-      <section className="py-24 bg-blue-50">
-        <div className="container mx-auto px-6 grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {campusLife.map((item, index) => (
-            <motion.div
-              key={index}
-              {...fadeInUp}
-              className="bg-white rounded-3xl overflow-hidden shadow-md"
-            >
-              <img src={item.img} className="h-64 w-full object-cover" alt={item.title} />
-
-              <div className="p-8">
-                <h3 className="text-2xl font-black text-orange-600 mb-4">
-                  {item.title}
-                </h3>
-                <p className="text-slate-700">{item.desc}</p>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* TESTIMONIALS */}
-      <section className="py-24 bg-white">
-        <div className="container mx-auto px-6">
-          <h2 className="text-4xl font-black text-center text-orange-600 mb-16">
-            Voices of SRIT
-          </h2>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {testimonials.map((t, i) => (
+      {/* ================= CARDS ================= */}
+      <section className="py-32">
+        <div className="container mx-auto px-6 grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+          {campusLife.map((item, i) => {
+            const Icon = item.icon;
+            return (
               <motion.div
                 key={i}
-                {...fadeInUp}
-                className="bg-blue-50 p-8 rounded-3xl"
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                whileHover={{ y: -14, scale: 1.02 }}
+                transition={{ delay: i * 0.08 }}
+                className="group rounded-3xl overflow-hidden
+                bg-white/10 backdrop-blur-2xl
+                border border-white/20
+                shadow-[0_0_40px_#22D3EE55]
+                hover:shadow-[0_0_90px_#FBBF24AA] transition"
               >
-                <h4 className="font-bold text-orange-600">{t.name}</h4>
-                <p className="text-sm text-slate-600 mb-4">{t.role}</p>
-                <p className="text-slate-700 italic">"{t.text}"</p>
+                <div className="relative h-60 overflow-hidden">
+                  <img
+                    src={item.img}
+                    alt={item.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
+                  />
+                </div>
+
+                <div className="p-8">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-10 h-10 rounded-xl
+                      bg-gradient-to-br from-[#FBBF24] to-[#22D3EE]
+                      flex items-center justify-center text-black">
+                      <Icon size={20} />
+                    </div>
+                    <span className="text-sm font-bold text-[#67E8F9]">
+                      {item.tag}
+                    </span>
+                  </div>
+
+                  <h3 className="text-2xl font-black text-[#FBBF24] mb-3">
+                    {item.title}
+                  </h3>
+                  <p className="text-[#CBD5F5] leading-relaxed">
+                    {item.desc}
+                  </p>
+                </div>
               </motion.div>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-20 bg-blue-100 text-center">
-        <h2 className="text-4xl md:text-5xl font-black text-orange-600 mb-8">
-          Ready to start your journey at SRIT?
+      {/* ================= CTA ================= */}
+      <section className="py-28 text-center bg-gradient-to-br from-[#020617] to-[#0B1F3A]">
+        <h2 className="text-4xl md:text-5xl font-black mb-10
+          bg-gradient-to-r from-[#FBBF24] to-[#22D3EE]
+          bg-clip-text text-transparent">
+          Ready to experience SRIT?
         </h2>
-        <button className="px-10 py-4 bg-blue-600 text-white rounded-full font-bold">
-          Apply for Admission 2026
+
+        <button
+          onClick={() => navigate("/admissions")}
+          className="px-14 py-4 rounded-full font-black text-black
+          bg-gradient-to-r from-[#FBBF24] to-[#22D3EE]
+          shadow-[0_0_40px_#22D3EEAA]
+          hover:shadow-[0_0_80px_#FBBF24AA]
+          hover:scale-105 transition flex items-center gap-2 mx-auto"
+        >
+          Apply for Admission <ArrowRight size={18} />
         </button>
       </section>
 
